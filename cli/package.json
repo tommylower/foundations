@@ -1,0 +1,24 @@
+{
+  "name": "wip-create-designbase",
+  "version": "0.0.1",
+  "description": "Scaffold a design-first codebase with opinionated defaults",
+  "bin": {
+    "create-designbase": "./index.js"
+  },
+  "type": "module",
+  "license": "MIT",
+  "author": "Thomas Lower",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tommylower/foundations"
+  },
+  "keywords": [
+    "scaffold",
+    "nextjs",
+    "tailwind",
+    "supabase",
+    "design-system",
+    "claude-code",
+    "ai-agents"
+  ]
+}

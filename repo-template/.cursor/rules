@@ -1,0 +1,10 @@
+read all files in .agents/ before starting any task.
+
+this project supports a local skills library for extended agent knowledge.
+check for a skills directory at: ./skills/, ~/.skills/, or ~/Desktop/code/skills/
+if found, reference it for design patterns, engineering conventions, and UI references.
+
+for frontend work, reference .agents/design.md
+for architecture, check .agents/architecture.md first
+use conventional commits
+after any session that adds dependencies, changes the design system, adds tools, or modifies project structure, update the relevant .agents/ files and README.md to reflect what changed before committing
