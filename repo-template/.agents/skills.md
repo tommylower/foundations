@@ -20,7 +20,7 @@ this project is built to be agent-assisted from the ground up. the .agents/ dire
 
    ./skills/               # project-local (committed to repo, shared with team)
    ~/.skills/              # user-global (private to your machine, available in all projects)
-   ~/Desktop/code/skills/  # alternative local path
+   ~/Desktop/code/tools/skills/  # alternative local path
 
 2. organize by domain:
 

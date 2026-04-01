@@ -24,7 +24,7 @@ cross-project knowledge (design patterns, engineering conventions, motion refere
 agents check these paths in order:
 - `./skills/` — project-local (committed to repo)
 - `~/.skills/` — user-global (private)
-- `~/Desktop/code/skills/` — shared library
+- `~/Desktop/code/tools/skills/` — shared library
 
 if no skills directory is found, `.agents/` contains everything needed.
 
