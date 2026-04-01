@@ -37,27 +37,28 @@ Not everything here will match your preferences. The stack file and conventions 
 
 ## `wip-create-designbase`
 
-> WIP — scaffolded, not yet functional.
-
 ```bash
 npx wip-create-designbase my-project
 ```
 
-What it will do:
+What it does:
 
 1. Create project directory, `git init`
 2. Scaffold Next.js with Bun — app router, TypeScript strict, ESLint + Prettier
 3. Install Tailwind CSS, Framer Motion, shadcn/ui, Supabase client
-4. Copy repo-template into the project:
+4. Install [Vercel Analytics](https://vercel.com/docs/analytics) + [Speed Insights](https://vercel.com/docs/speed-insights) and add them to the root layout. Analytics tracks page views and custom events. Speed Insights measures real-user performance (LCP, CLS, FID). Both report automatically once deployed to Vercel — zero config, no third-party scripts.
+5. Copy repo-template into the project:
    - `.agents/` — structured context that tells AI agents about your project, architecture, design system, and current tasks
    - `AGENTS.md` — universal agent instructions (single source of truth)
    - `.claude/CLAUDE.md`, `.cursor/rules`, `.windsurfrules`, `.github/copilot-instructions.md`, `.github/codex-instructions.md` — tool-specific pointers to AGENTS.md
    - `design/` — directory for Pencil design files
    - `.gitattributes` — binary handling for `.pen` files
-5. Create `.env.example` with Supabase placeholders
-6. Detect or clone [tommylower/skills](https://github.com/tommylower/skills), symlink relevant skills into `.claude/skills/`
-7. Install `/rams` command (accessibility + visual design review)
-8. Initial commit
+6. Create `.env.example` with Supabase placeholders
+7. Detect or clone [tommylower/skills](https://github.com/tommylower/skills), symlink relevant skills into `.claude/skills/`
+8. Install `/rams` command (accessibility + visual design review)
+9. Initial commit
+
+Once deployed, you can also enable [Vercel Agent](https://vercel.com/docs/agent) in your dashboard for AI-powered code review on PRs and automated incident investigation.
 
 The point is that after running this, `bun dev` works and any AI agent you open the project with already has full context — your design system, your conventions, your tools.
 

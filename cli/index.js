@@ -31,8 +31,32 @@ process.chdir(target);
 
 // 2. install deps
 console.log("\n  installing dependencies...\n");
-run("bun add framer-motion @supabase/supabase-js");
+run("bun add framer-motion @supabase/supabase-js @vercel/analytics @vercel/speed-insights");
 run("bun add -d prettier");
+
+// 2b. add vercel analytics + speed insights to layout
+console.log("\n  adding vercel analytics + speed insights...\n");
+
+const layoutPath = join(target, "src/app/layout.tsx");
+if (existsSync(layoutPath)) {
+  let layout = readFileSync(layoutPath, "utf-8");
+
+  // add imports at the top, after existing imports
+  const analyticsImports = `import { Analytics } from "@vercel/analytics/react";\nimport { SpeedInsights } from "@vercel/speed-insights/next";\n`;
+
+  const lastImportIdx = layout.lastIndexOf("import ");
+  const lastImportEnd = layout.indexOf("\n", layout.indexOf(";", lastImportIdx));
+  layout = layout.slice(0, lastImportEnd + 1) + analyticsImports + layout.slice(lastImportEnd + 1);
+
+  // add components before closing </body>
+  layout = layout.replace(
+    /\{children\}([\s\S]*?)<\/body>/,
+    `{children}\n          <Analytics />\n          <SpeedInsights />\n      </body>`
+  );
+
+  writeFileSync(layoutPath, layout);
+  console.log("  added <Analytics /> and <SpeedInsights /> to layout.tsx");
+}
 
 // 3. init shadcn
 console.log("\n  setting up shadcn/ui...\n");
@@ -175,4 +199,10 @@ console.log(`
     bun dev
 
   open http://localhost:3000
+
+  vercel analytics and speed insights are installed and will
+  report automatically once deployed to vercel.
+
+  to enable vercel agent (AI code review + incident investigation):
+  https://vercel.com/docs/agent
 `);
