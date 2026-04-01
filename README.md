@@ -50,8 +50,8 @@ What it will do:
 3. Install Tailwind CSS, Framer Motion, shadcn/ui, Supabase client
 4. Copy repo-template into the project:
    - `.agents/` — structured context that tells AI agents about your project, architecture, design system, and current tasks
-   - `.claude/CLAUDE.md` — Claude Code instructions
-   - `.cursor/rules` — Cursor instructions
+   - `AGENTS.md` — universal agent instructions (single source of truth)
+   - `.claude/CLAUDE.md`, `.cursor/rules`, `.windsurfrules`, `.github/copilot-instructions.md`, `.github/codex-instructions.md` — tool-specific pointers to AGENTS.md
    - `design/` — directory for Pencil design files
    - `.gitattributes` — binary handling for `.pen` files
 5. Create `.env.example` with Supabase placeholders
@@ -75,15 +75,18 @@ repo-template/
     tools.md          # recommended tools
     skills.md         # how skills library connects
     README.md         # agent entry point
-  .claude/CLAUDE.md
-  .cursor/rules
+  AGENTS.md                          # universal instructions (all tools read this)
+  .claude/CLAUDE.md                  # Claude Code → reads AGENTS.md + claude-specific prefs
+  .cursor/rules                      # Cursor → reads AGENTS.md
+  .windsurfrules                     # Windsurf → reads AGENTS.md
+  .github/copilot-instructions.md   # GitHub Copilot → reads AGENTS.md
+  .github/codex-instructions.md     # Codex → reads AGENTS.md
   design/README.md
-  AGENTS.md
   README.md
   .gitattributes
 ```
 
-If you don't use Claude Code or Cursor, the `.agents/` files still work as project documentation. The format is agent-friendly but human-readable.
+`AGENTS.md` is the single source of truth. Each tool's config file is a one-line pointer to it. Tool-specific preferences (like Claude's `ultrathink`) stay in that tool's config only. This means the project works with any AI coding tool without maintaining separate instructions for each one.
 
 ## foundation files
 

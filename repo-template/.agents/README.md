@@ -18,8 +18,9 @@ start here. this directory contains everything an AI agent needs to work on this
 
 ## shared knowledge
 
-reusable patterns and references live in the shared skills library:
-`~/Desktop/code/skills/`
+reusable patterns and references live in the shared skills library.
+agents check for a skills directory at `./skills/`, `~/.skills/`, or `~/Desktop/code/skills/`.
 
-design system foundations: `~/Desktop/code/skills/design/`
-engineering conventions: `~/Desktop/code/skills/foundations/`
+- design patterns: `skills/design/`
+- agent workflows: `skills/agents/`
+- marketing: `skills/marketing/`

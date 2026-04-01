@@ -25,10 +25,9 @@ this project is built to be agent-assisted from the ground up. the .agents/ dire
 2. organize by domain:
 
    skills/
-     foundations/          # stack defaults, conventions, workflows
      design/              # design system, UI principles, motion, references
+     agents/              # agent behavior patterns, autonomous workflows
      marketing/           # brand voice, content strategy, copy patterns
-     agents/              # agent behavior patterns, prompting strategies
 
 3. each skill is a markdown file or a folder with a SKILL.md inside:
 
