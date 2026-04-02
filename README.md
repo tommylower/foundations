@@ -1,4 +1,4 @@
-# foundations
+# wip-scaffold
 
 Project scaffold for design-first codebases. Sets up Next.js, Tailwind, Supabase, and agent context so you start building immediately instead of configuring.
 
@@ -9,7 +9,7 @@ This is opinionated. It reflects how I work — if your stack or process is diff
 ## what's in here
 
 ```
-foundations/
+wip-scaffold/
   repo-template/     # files copied into every new project
   cli/               # wip-scaffold CLI
   agent-swarm.md     # multi-agent parallel workflow pattern

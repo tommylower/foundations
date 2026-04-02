@@ -68,7 +68,7 @@ if (infoMode) {
   ${dim("/rams")}                        run accessibility + design review
 
   ${blue("links")}
-  ${dim("github.com/tommylower/foundations")}   scaffold + docs
+  ${dim("github.com/tommylower/wip-scaffold")}   scaffold + docs
   ${dim("github.com/tommylower/skills")}       design + agent skills
   ${dim("waveinprogress.com")}
 `);
@@ -103,6 +103,7 @@ if (upgradeMode) {
   // find template
   const templatePaths = [
     join(import.meta.dirname, "..", "repo-template"),
+    join(homedir(), "Desktop/code/tools/wip-scaffold/repo-template"),
     join(homedir(), "Desktop/code/tools/foundations/repo-template"),
   ];
 
@@ -115,7 +116,7 @@ if (upgradeMode) {
   }
 
   if (!templateDir) {
-    console.error("  could not find repo-template. clone foundations first.");
+    console.error("  could not find repo-template. clone wip-scaffold first.");
     process.exit(1);
   }
 
@@ -313,6 +314,7 @@ step("agent context", ".agents/, AGENTS.md, tool configs for every AI editor");
 
 const templatePaths = [
   join(import.meta.dirname, "..", "repo-template"),
+  join(homedir(), "Desktop/code/tools/wip-scaffold/repo-template"),
   join(homedir(), "Desktop/code/tools/foundations/repo-template"),
 ];
 

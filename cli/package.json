@@ -1,6 +1,6 @@
 {
   "name": "wip-scaffold",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Scaffold a design-first codebase with opinionated defaults",
   "bin": {
     "wip-scaffold": "./index.js"
@@ -10,7 +10,7 @@
   "author": "Thomas Lower",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tommylower/foundations"
+    "url": "https://github.com/tommylower/wip-scaffold"
   },
   "keywords": [
     "scaffold",
