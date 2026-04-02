@@ -1,19 +1,179 @@
 #!/usr/bin/env node
 
 import { execSync } from "child_process";
-import { cpSync, existsSync, mkdirSync, symlinkSync, writeFileSync, readFileSync } from "fs";
+import { cpSync, existsSync, mkdirSync, symlinkSync, writeFileSync, readFileSync, lstatSync, unlinkSync, realpathSync } from "fs";
 import { resolve, join, basename } from "path";
 import { homedir } from "os";
 
 const run = (cmd, opts = {}) => execSync(cmd, { stdio: "inherit", ...opts });
 const quiet = (cmd, opts = {}) => execSync(cmd, { stdio: "pipe", ...opts }).toString().trim();
 
-const name = process.argv[2];
+const args = process.argv.slice(2);
+const upgradeMode = args.includes("--upgrade");
+const name = args.find((a) => !a.startsWith("--"));
 
-if (!name) {
-  console.error("\n  usage: npx wip-scaffold <project-name>\n");
+if (!name && !upgradeMode) {
+  console.error(`
+  usage:
+    npx wip-scaffold <project-name>     create a new project
+    npx wip-scaffold --upgrade           update current project's scaffold files
+`);
   process.exit(1);
 }
+
+// ─── upgrade mode ──────────────────────────────────────────────────────────────
+
+if (upgradeMode) {
+  const target = process.cwd();
+
+  // sanity check: are we in a scaffolded project?
+  if (!existsSync(join(target, "AGENTS.md"))) {
+    console.error("\n  not a scaffolded project (no AGENTS.md found). run from the project root.\n");
+    process.exit(1);
+  }
+
+  console.log("\n  upgrading scaffold files...\n");
+
+  // find template
+  const templatePaths = [
+    join(import.meta.dirname, "..", "repo-template"),
+    join(homedir(), "Desktop/code/tools/foundations/repo-template"),
+  ];
+
+  let templateDir;
+  for (const p of templatePaths) {
+    if (existsSync(p)) {
+      templateDir = p;
+      break;
+    }
+  }
+
+  if (!templateDir) {
+    console.error("  could not find repo-template. clone foundations first.");
+    process.exit(1);
+  }
+
+  // ── files that are always safe to overwrite (never contain user content) ──
+
+  const alwaysOverwrite = [
+    "AGENTS.md",
+    ".claude/CLAUDE.md",
+    ".cursor/rules",
+    ".windsurfrules",
+    ".github/copilot-instructions.md",
+    ".github/codex-instructions.md",
+    ".gitattributes",
+  ];
+
+  for (const file of alwaysOverwrite) {
+    const src = join(templateDir, file);
+    const dest = join(target, file);
+    if (existsSync(src)) {
+      mkdirSync(join(dest, ".."), { recursive: true });
+      cpSync(src, dest, { force: true });
+      console.log(`  updated ${file}`);
+    }
+  }
+
+  // ── files that should only be created if missing (user fills these in) ──
+
+  const createIfMissing = [
+    ".agents/README.md",
+    ".agents/project.md",
+    ".agents/architecture.md",
+    ".agents/design.md",
+    ".agents/tasks.md",
+    ".agents/tools.md",
+    ".agents/skills.md",
+    "design/README.md",
+  ];
+
+  for (const file of createIfMissing) {
+    const src = join(templateDir, file);
+    const dest = join(target, file);
+    if (existsSync(src) && !existsSync(dest)) {
+      mkdirSync(join(dest, ".."), { recursive: true });
+      cpSync(src, dest);
+      console.log(`  created ${file} (was missing)`);
+    }
+  }
+
+  // ── re-link skills symlink ──
+
+  const skillsPaths = [
+    join(target, "skills"),
+    join(homedir(), ".skills"),
+    join(homedir(), "Desktop/code/tools/skills"),
+  ];
+
+  let skillsDir;
+  for (const p of skillsPaths) {
+    if (existsSync(p)) {
+      skillsDir = p;
+      break;
+    }
+  }
+
+  if (skillsDir) {
+    const claudeSkillsDir = join(target, ".claude", "skills");
+    mkdirSync(claudeSkillsDir, { recursive: true });
+
+    const symlinkPath = join(claudeSkillsDir, "design");
+    const designSkills = join(skillsDir, "design");
+
+    // remove broken or outdated symlink so we can re-create it
+    try {
+      const stat = lstatSync(symlinkPath);
+      if (stat.isSymbolicLink()) {
+        unlinkSync(symlinkPath);
+      }
+    } catch {
+      // doesn't exist, that's fine
+    }
+
+    if (!existsSync(symlinkPath) && existsSync(designSkills)) {
+      try {
+        symlinkSync(designSkills, symlinkPath);
+        console.log(`  linked design skills from ${skillsDir}`);
+      } catch {
+        console.log("  skills symlink already exists.");
+      }
+    }
+
+    console.log(`  skills directory: ${skillsDir}`);
+  }
+
+  // ── re-install /rams ──
+
+  const ramsSource = skillsDir ? join(skillsDir, "design/rams/SKILL.md") : null;
+  const claudeCommandsDir = join(homedir(), ".claude", "commands");
+
+  if (ramsSource && existsSync(ramsSource)) {
+    mkdirSync(claudeCommandsDir, { recursive: true });
+    const ramsDest = join(claudeCommandsDir, "rams.md");
+    cpSync(ramsSource, ramsDest, { force: true });
+    console.log("  updated /rams command.");
+  }
+
+  console.log(`
+  done. upgraded scaffold files only — source code and design files untouched.
+
+  what was updated:
+    - AGENTS.md, tool configs (.claude, .cursor, .windsurfrules, .github)
+    - .gitattributes
+    - skills symlink
+    - /rams command
+
+  what was NOT touched:
+    - .agents/*.md (your project context)
+    - src/ (your code)
+    - design/ (your design files)
+    - package.json, node_modules, .env
+`);
+  process.exit(0);
+}
+
+// ─── create mode ───────────────────────────────────────────────────────────────
 
 const target = resolve(process.cwd(), name);
 

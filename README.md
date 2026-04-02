@@ -38,8 +38,11 @@ Not everything here will match your preferences. The stack file and conventions 
 ## `wip-scaffold`
 
 ```bash
-npx wip-scaffold my-project
+npx wip-scaffold my-project       # create a new project
+npx wip-scaffold --upgrade         # update an existing project (run from project root)
 ```
+
+### create
 
 What it does:
 
@@ -61,6 +64,24 @@ What it does:
 Once deployed, you can also enable [Vercel Agent](https://vercel.com/docs/agent) in your dashboard for AI-powered code review on PRs and automated incident investigation.
 
 The point is that after running this, `bun dev` works and any AI agent you open the project with already has full context — your design system, your conventions, your tools.
+
+### upgrade
+
+Run `npx wip-scaffold --upgrade` from an existing project root to pull in the latest scaffold files without touching your code or design work.
+
+**Updates** (always overwritten — these are infrastructure, not content):
+- `AGENTS.md` — universal agent instructions
+- `.claude/CLAUDE.md`, `.cursor/rules`, `.windsurfrules`, `.github/copilot-instructions.md`, `.github/codex-instructions.md` — tool config pointers
+- `.gitattributes`
+- Skills symlink (re-linked to latest)
+- `/rams` command (re-installed globally)
+
+**Never touched:**
+- `.agents/*.md` — your project context (project, architecture, design, tasks)
+- `src/` — your source code
+- `design/` — your design files
+- `package.json`, `node_modules`, `.env` — your dependencies and environment
+- Any `.agents/` template files you've already filled in (only creates missing ones)
 
 ## skills
 
