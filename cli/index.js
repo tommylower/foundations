@@ -279,6 +279,29 @@ if (existsSync(layoutPath)) {
   writeFileSync(layoutPath, layout);
 }
 
+step("agentation", "dev-only design annotation toolbar + MCP server");
+run("bun add agentation");
+
+// add Agentation to layout (dev only)
+if (existsSync(layoutPath)) {
+  let layout = readFileSync(layoutPath, "utf-8");
+
+  // add import if not already there
+  if (!layout.includes("agentation")) {
+    const lastImportIdx = layout.lastIndexOf("import ");
+    const lastImportEnd = layout.indexOf("\n", layout.indexOf(";", lastImportIdx));
+    layout = layout.slice(0, lastImportEnd + 1) + `import { Agentation } from "agentation";\n` + layout.slice(lastImportEnd + 1);
+
+    // add component after Analytics/SpeedInsights, before </body>
+    layout = layout.replace(
+      /<\/body>/,
+      `    {process.env.NODE_ENV === "development" && <Agentation />}\n      </body>`
+    );
+
+    writeFileSync(layoutPath, layout);
+  }
+}
+
 step("shadcn/ui", "accessible component primitives you own");
 try {
   run("bunx shadcn@latest init -y -d");
