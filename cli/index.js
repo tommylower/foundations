@@ -13,7 +13,6 @@ const prompt = (question) => {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   return new Promise((res) => {
     rl.question(question, (a) => { rl.close(); res(a.trim()); });
-    rl.on("close", () => res(""));
   });
 };
 
