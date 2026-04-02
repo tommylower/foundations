@@ -109,6 +109,16 @@ Skills are markdown files that give agents specialized knowledge. The CLI symlin
 | **agentation** | Install and configure Agentation visual feedback toolbar in Next.js. Component setup + MCP server for agent-driven design annotations. | Setting up design feedback loops in a project. |
 | **agentation-self-driving** | Autonomous design critique — agent opens a browser, scans pages, creates annotations with coordinate-based interaction. Two-session workflow: one agent critiques, another fixes. | Automated design QA across full pages. Experimental. |
 
+### design systems (reference only)
+
+The skills repo also includes `design-systems/` — complete design system references that agents can explore when you explicitly ask for them. These are **not auto-loaded** by the scaffold. They live outside `design/`, so the symlink doesn't pull them into every project's context.
+
+To use one, just ask: "use Nothing style" or "apply the Nothing design system."
+
+| System | What it is | Credit |
+|--------|-----------|--------|
+| **nothing-design** | Nothing-inspired monochrome UI — Swiss typography, OLED blacks, Space Grotesk/Mono, three-layer hierarchy, industrial widgets. Includes tokens, component specs, and platform mappings (CSS, React/Tailwind, SwiftUI). | [dominikmartn](https://github.com/dominikmartn/nothing-design-skill) |
+
 ### marketing skills
 
 Submodule: [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) by Corey Haines. 34 skills covering copywriting, SEO, CRO, paid ads, email sequences, pricing, analytics, and more. Includes 51 CLI tools and integration guides for GA4, Stripe, Mailchimp, and 30+ platforms.
