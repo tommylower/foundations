@@ -12,7 +12,17 @@ const args = process.argv.slice(2);
 const upgradeMode = args.includes("--upgrade");
 const name = args.find((a) => !a.startsWith("--"));
 
-console.log("\n  WAVES DONT DIE. WAVEINPROGRESS.COM\n");
+const blue = (s) => `\x1b[38;2;56;140;247m${s}\x1b[0m`;
+const dim = (s) => `\x1b[2m${s}\x1b[0m`;
+
+console.log(blue(`
+  ██     ██ ██ ██████
+  ██     ██ ██ ██   ██
+  ██  █  ██ ██ ██████
+  ██ ███ ██ ██ ██
+   ███ ███  ██ ██
+`));
+console.log(dim("  WAVES DONT DIE.") + "  waveinprogress.com\n");
 
 if (!name && !upgradeMode) {
   console.error(`  usage:
