@@ -38,8 +38,8 @@ Not everything here will match your preferences. The stack file and conventions 
 ## `wip-scaffold`
 
 ```bash
-npx wip-scaffold my-project       # create a new project
-npx wip-scaffold --upgrade         # update an existing project (run from project root)
+bunx wip-scaffold my-project       # create a new project
+bunx wip-scaffold --upgrade         # update an existing project (run from project root)
 ```
 
 ### create
@@ -67,7 +67,7 @@ The point is that after running this, `bun dev` works and any AI agent you open 
 
 ### upgrade
 
-Run `npx wip-scaffold --upgrade` from an existing project root to pull in the latest scaffold files without touching your code or design work.
+Run `bunx wip-scaffold --upgrade` from an existing project root to pull in the latest scaffold files without touching your code or design work.
 
 **Updates** (always overwritten — these are infrastructure, not content):
 - `AGENTS.md` — universal agent instructions
