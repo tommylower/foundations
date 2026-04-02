@@ -7,6 +7,7 @@
 - If something goes sideways, STOP and re-plan immediately – don't keep pushing
 - Use plan mode for verification steps, not just building
 - Write detailed specs upfront to reduce ambiguity
+- **Golden rule**: capture everything during planning so implementation doesn't need to search the codebase. If you'd need to grep during implementation, find it now and put it in the plan.
 
 ### 2. Subagent Strategy
 - Use subagents liberally to keep main context window clean
@@ -37,6 +38,78 @@
 - Point at logs, errors, failing tests – then resolve them
 - Zero context switching required from the user
 - Go fix failing CI tests without being told how
+
+## Context Management
+
+### Strategic Compaction
+
+Don't rely on auto-compaction — it fires at arbitrary points. Use `/compact` deliberately at natural task boundaries.
+
+**When to compact:**
+- After exploration/research, before starting implementation
+- After debugging a hard problem, before continuing feature work
+- After completing a major subtask, before starting the next
+- When context feels bloated with old search results or failed attempts
+
+**When NOT to compact:**
+- Mid-implementation — you'll lose the mental model of what you're building
+- While debugging — you need the error context and what you've already tried
+- Right after planning — the plan context is what drives implementation
+
+### Context Budget Awareness
+
+Every loaded component costs tokens. Be deliberate about what's active.
+
+- Each MCP tool costs ~500 tokens just being registered (tool description in context)
+- A 30-tool MCP server costs more context than all your skills combined
+- Keep under 10 MCP servers enabled, under 80 total tools active
+- Agent descriptions load into every Task tool invocation even if the agent is never spawned
+- Quick estimate: prose = `words × 1.3` tokens, code = `chars / 4` tokens
+
+## Hooks
+
+### Config Protection
+
+Prevent Claude from weakening linter/formatter/type configs instead of fixing the actual code. Add to `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "bash -c 'PROTECTED=\".eslintrc .eslintrc.js .eslintrc.json eslint.config.js eslint.config.mjs .prettierrc .prettierrc.js prettier.config.js tsconfig.json biome.json\"; FILE=\"$CLAUDE_FILE_PATH\"; BASE=$(basename \"$FILE\" 2>/dev/null); for p in $PROTECTED; do if [ \"$BASE\" = \"$p\" ]; then echo \"BLOCKED: fix the code, not the config. do not weaken linter/formatter/type settings.\"; exit 2; fi; done'"
+      }
+    ]
+  }
+}
+```
+
+This blocks edits to ESLint, Prettier, TypeScript, and Biome configs. Claude will fix the code to satisfy the rules instead of loosening the rules.
+
+### Stop-Time Batch Processing
+
+Instead of running prettier/tsc after every single edit, accumulate edited files and run format + typecheck once when Claude pauses. Add to `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "bash -c 'echo \"$CLAUDE_FILE_PATH\" >> /tmp/claude-edited-files.txt'"
+      }
+    ],
+    "Stop": [
+      {
+        "command": "bash -c 'if [ -f /tmp/claude-edited-files.txt ]; then FILES=$(sort -u /tmp/claude-edited-files.txt | grep -E \"\\.(ts|tsx|js|jsx)$\"); if [ -n \"$FILES\" ]; then echo \"$FILES\" | xargs bunx prettier --write 2>/dev/null; echo \"$FILES\" | xargs bunx tsc --noEmit 2>&1 | head -20; fi; rm /tmp/claude-edited-files.txt; fi'"
+      }
+    ]
+  }
+}
+```
+
+This runs once per Claude response instead of per-edit — much more efficient on large refactors.
 
 ## Task Management
 

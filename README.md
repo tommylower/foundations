@@ -91,7 +91,7 @@ Skills are markdown files that give agents specialized knowledge. The CLI symlin
 
 | Skill | What it covers | When agents use it |
 |-------|---------------|-------------------|
-| **ui-principles** | Spacing scale (4–120px), type hierarchy (display→micro), layout rules, 12-column grid, responsive breakpoints, component standards | Foundation for all design work. Stops agents from inventing arbitrary values. |
+| **ui-principles** | Spacing scale (4–120px), type hierarchy (display→micro), layout rules, 12-column grid, responsive breakpoints, component standards, AI slop detection checklist | Foundation for all design work. Stops agents from inventing arbitrary values or producing generic AI-looking output. |
 | **gradients** | Color spaces (oklab/oklch/sRGB), linear/radial/conic gradients, color hints, layering with blend modes, animation performance, production recipes | Any gradient work. Defaults agents to oklab instead of muddy sRGB blends. |
 | **responsive-design** | Fluid type/spacing with `clamp()`, intrinsic grids, Pretext for canvas-based text measurement, touch/hover/motion media queries, Framer Motion layout transitions | Responsive layouts. Teaches recomposition over shrinking. |
 | **framer-motion** | Scroll reveals, staggered lists, hover/tap interactions, accordions, page transitions, spring values, timing guidelines | Any animation. Ready-to-use patterns with tested spring stiffness and damping. |
@@ -136,7 +136,7 @@ repo-template/
     architecture.md   # stack, file structure, data model, services
     design.md         # colors, type scale, spacing, component patterns
     tasks.md          # current work, next up, open questions
-    tools.md          # recommended tools (pencil.dev, pretext)
+    tools.md          # recommended tools (pencil.dev, pretext, context7)
     skills.md         # how the skills library connects
     README.md         # agent entry point — reads all other .agents/ files
   AGENTS.md                          # universal instructions (all tools read this)
@@ -157,10 +157,10 @@ repo-template/
 | File | What it covers | Who it's useful for |
 |------|---------------|-------------------|
 | **stack.md** | Technology choices and reasoning for each layer of the stack | Anyone evaluating whether this setup fits their needs |
-| **conventions.md** | TypeScript strict, functional components, naming (kebab-case files, PascalCase components), file structure, conventional commits | Anyone working in this stack who wants consistent code style |
+| **conventions.md** | TypeScript strict, functional components, naming (kebab-case files, PascalCase components), file structure, conventional commits, search-before-you-build principle | Anyone working in this stack who wants consistent code style |
 | **workflows.md** | `bun install` → `bun dev`, push-to-deploy via Vercel, env var management, Supabase setup | Reference for onboarding or setting up a new machine |
-| **claude-workflow.md** | Plan mode for complex tasks, subagent strategy, verification before completion, self-improvement loops, demanding elegance | Claude Code users who want a structured way to work with agents |
-| **agent-swarm.md** | Multi-agent parallel work — task decomposition, wave execution (2-4 agents), review loops with rotating critique lenses (security, UX, correctness, performance) | Advanced. For complex builds where you want multiple agents working simultaneously |
+| **claude-workflow.md** | Plan mode, subagent strategy, verification, self-improvement loops, demanding elegance, strategic compaction (when to `/compact`), context budget awareness, hook patterns (config protection, batch format+typecheck) | Claude Code users who want a structured way to work with agents |
+| **agent-swarm.md** | Multi-agent parallel work — task decomposition, wave execution (2-4 agents), review loops with rotating critique lenses (security, UX, correctness, performance), adversarial dual-review (Santa Method) | Advanced. For complex builds where you want multiple agents working simultaneously |
 
 ## how it all connects
 

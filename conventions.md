@@ -27,6 +27,11 @@ src/
   styles/        # global styles, tokens
 ```
 
+## search before you build
+- before writing any utility, helper, or abstraction: check npm, existing project code, and MCP servers for an existing solution
+- decision order: **adopt** (exact match exists) > **extend** (partial match, add what's missing) > **compose** (combine multiple partial matches) > **build** (nothing suitable)
+- this applies to agents too — don't let Claude write a date formatter when `date-fns` is already installed
+
 ## git
 - conventional commits (feat:, fix:, chore:, docs:)
 - branch naming: feature/description, fix/description

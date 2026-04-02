@@ -12,5 +12,9 @@ visual design tool that lives in the IDE. designs stored as .pen files in the re
 text measurement engine. 15KB, zero deps. bypasses DOM reflow for precise text layout via pure arithmetic.
 - install: bun add @chenglou/pretext
 - usage: src/lib/text.ts
-interface craft skills installed globally at ~/.agents/skills/
-interface craft skills installed globally at ~/.agents/skills/
+
+## documentation
+### context7 MCP
+live documentation lookup for any library. queries up-to-date docs for Next.js, Tailwind, Framer Motion, Supabase, etc. instead of relying on training data that may be stale.
+- install: add to your MCP config as `@upstash/context7-mcp`
+- use when: you need current API docs, migration guides, or changelog details for any dependency

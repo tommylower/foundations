@@ -84,6 +84,45 @@ Wave 1: Build auth module (3 agents in parallel)
 
 ---
 
+## Adversarial Dual-Review (Santa Method)
+
+For code that ships without human review, use two independent reviewers — ideally different models — that must both approve before merging.
+
+### Process
+
+1. **Implement** — build the feature or fix
+2. **Reviewer A** — pipe to external model (e.g. GPT via `llm` CLI) with a specific review lens
+3. **Reviewer B** — pipe to a different model or same model with a different lens
+4. **Gate** — both must approve. If either flags issues, fix all findings, commit, re-run with fresh reviewers
+5. **Max 3 rounds** — if still failing after 3 rounds, escalate to a human
+
+### Why two reviewers
+
+- Single-model review has blind spots — the model that wrote the code shares biases with the model reviewing it
+- Fresh agents each round prevents anchoring (reviewer doesn't remember "I already approved most of this")
+- Different models catch different classes of issues — one may be better at security, another at logic
+
+### Example
+
+```bash
+# reviewer A: security lens via GPT
+repomix --style plain --include "src/auth/**" . -o /tmp/review.txt && \
+cat /tmp/review.txt | llm -m gpt-5.2 -o reasoning_effort high \
+  -s "Review this code for security vulnerabilities. Find injection vectors, auth bypasses, race conditions." \
+  > reviews/security-$(date +%Y%m%d).md
+
+# reviewer B: correctness lens via Gemini
+cat /tmp/review.txt | llm -m gemini-2.5-pro \
+  -s "Review this code for logic bugs, edge cases, broken invariants, and spec deviations." \
+  > reviews/correctness-$(date +%Y%m%d).md
+
+rm /tmp/review.txt
+```
+
+Both return APPROVED → merge. Either flags issues → fix, re-run both.
+
+---
+
 ## Required Tooling
 
 Before using this workflow, install:
