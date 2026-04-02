@@ -2,7 +2,7 @@
 
 Project scaffold for design-first codebases. Sets up Next.js, Tailwind, Supabase, and agent context so you start building immediately instead of configuring.
 
-Pairs with [tommylower/skills](https://github.com/tommylower/skills) for design and engineering knowledge that agents reference during development.
+Pairs with [tommylower/skills](https://github.com/tommylower/skills) for design and engineering knowledge that agents reference during development. Skills are symlinked into every project — when you add a new skill to the repo, every project picks it up automatically.
 
 This is opinionated. It reflects how I work — if your stack or process is different, the [skills](https://github.com/tommylower/skills) repo is useful on its own without any of this.
 
@@ -11,7 +11,7 @@ This is opinionated. It reflects how I work — if your stack or process is diff
 ```
 foundations/
   repo-template/     # files copied into every new project
-  cli/               # wip-create-designbase (WIP)
+  cli/               # wip-scaffold CLI
   agent-swarm.md     # multi-agent parallel workflow pattern
   claude-workflow.md # Claude Code working patterns
   conventions.md     # code style, naming, file structure
@@ -35,10 +35,10 @@ foundations/
 
 Not everything here will match your preferences. The stack file and conventions are the most opinionated parts — read those first to see if this setup aligns with how you work.
 
-## `wip-create-designbase`
+## `wip-scaffold`
 
 ```bash
-npx wip-create-designbase my-project
+npx wip-scaffold my-project
 ```
 
 What it does:
@@ -54,13 +54,45 @@ What it does:
    - `design/` — directory for Pencil design files
    - `.gitattributes` — binary handling for `.pen` files
 6. Create `.env.example` with Supabase placeholders
-7. Detect or clone [tommylower/skills](https://github.com/tommylower/skills), symlink relevant skills into `.claude/skills/`
+7. Detect or clone [tommylower/skills](https://github.com/tommylower/skills), symlink the entire `design/` skills directory into `.claude/skills/`
 8. Install `/rams` command (accessibility + visual design review)
 9. Initial commit
 
 Once deployed, you can also enable [Vercel Agent](https://vercel.com/docs/agent) in your dashboard for AI-powered code review on PRs and automated incident investigation.
 
 The point is that after running this, `bun dev` works and any AI agent you open the project with already has full context — your design system, your conventions, your tools.
+
+## skills
+
+Skills are markdown files that give agents specialized knowledge. The CLI symlinks the entire `design/` directory from [tommylower/skills](https://github.com/tommylower/skills) into each project — so adding a skill to the repo means every project gets it immediately, no re-scaffolding needed.
+
+### design skills
+
+| Skill | What it covers | When agents use it |
+|-------|---------------|-------------------|
+| **ui-principles** | Spacing scale (4–120px), type hierarchy (display→micro), layout rules, 12-column grid, responsive breakpoints, component standards | Foundation for all design work. Stops agents from inventing arbitrary values. |
+| **gradients** | Color spaces (oklab/oklch/sRGB), linear/radial/conic gradients, color hints, layering with blend modes, animation performance, production recipes | Any gradient work. Defaults agents to oklab instead of muddy sRGB blends. |
+| **responsive-design** | Fluid type/spacing with `clamp()`, intrinsic grids, Pretext for canvas-based text measurement, touch/hover/motion media queries, Framer Motion layout transitions | Responsive layouts. Teaches recomposition over shrinking. |
+| **framer-motion** | Scroll reveals, staggered lists, hover/tap interactions, accordions, page transitions, spring values, timing guidelines | Any animation. Ready-to-use patterns with tested spring stiffness and damping. |
+| **css-interaction-tips** | Button press feel (`scale(0.97)`), smooth entrances, jitter fixes (`will-change`), transform-origin for popovers, touch target expansion, hover-only media queries | Micro-interaction polish. Quick lookup table format. |
+| **rams** | WCAG 2.1 accessibility audit + visual consistency review. Checks contrast (4.5:1), touch targets (44px), aria-labels, spacing consistency, z-index, overflow. Returns scored report with line numbers. | Run via `/rams` after building any component. |
+| **dialkit** | Floating dev-only control panel — sliders, toggles, color pickers, spring curve editors wired directly to component values. `useDialKit` hook. | Polish phase. Tune animation values without edit-save-reload. Remove before shipping. |
+| **reference-patterns** | Design patterns from Linear (dark monochromatic, subtle glows), Vercel (black/white, code-like), Lovable (warm gradients, embedded demos). General rules for dark themes, section transitions, nav patterns. | Building marketing pages or product UIs. Real-world examples over generic patterns. |
+| **figma-mcp** | Figma remote MCP server — reads design tokens, component layouts, variables, and styles from Figma files via link. Generates code from frames. | When designing in Figma. Bridges design files to implementation without manual handoff. |
+| **wiretext** | ASCII wireframing via MCP server. Primitives (box, text, line, arrow) and components (button, input, modal, navbar, tabs, card). | Early-stage planning. Prototype page structure before writing code. |
+
+### agent skills
+
+| Skill | What it covers | When agents use it |
+|-------|---------------|-------------------|
+| **agentation** | Install and configure Agentation visual feedback toolbar in Next.js. Component setup + MCP server for agent-driven design annotations. | Setting up design feedback loops in a project. |
+| **agentation-self-driving** | Autonomous design critique — agent opens a browser, scans pages, creates annotations with coordinate-based interaction. Two-session workflow: one agent critiques, another fixes. | Automated design QA across full pages. Experimental. |
+
+### marketing skills
+
+Submodule: [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) by Corey Haines. 34 skills covering copywriting, SEO, CRO, paid ads, email sequences, pricing, analytics, and more. Includes 51 CLI tools and integration guides for GA4, Stripe, Mailchimp, and 30+ platforms.
+
+Worth pulling in for marketing sites, landing pages, or growth work. Not needed for pure product/app builds.
 
 ## repo-template
 
@@ -73,18 +105,18 @@ repo-template/
     architecture.md   # stack, file structure, data model, services
     design.md         # colors, type scale, spacing, component patterns
     tasks.md          # current work, next up, open questions
-    tools.md          # recommended tools
-    skills.md         # how skills library connects
-    README.md         # agent entry point
+    tools.md          # recommended tools (pencil.dev, pretext)
+    skills.md         # how the skills library connects
+    README.md         # agent entry point — reads all other .agents/ files
   AGENTS.md                          # universal instructions (all tools read this)
-  .claude/CLAUDE.md                  # Claude Code → reads AGENTS.md + claude-specific prefs
+  .claude/CLAUDE.md                  # Claude Code → reads AGENTS.md + claude-specific prefs (ultrathink, tone)
   .cursor/rules                      # Cursor → reads AGENTS.md
   .windsurfrules                     # Windsurf → reads AGENTS.md
   .github/copilot-instructions.md   # GitHub Copilot → reads AGENTS.md
   .github/codex-instructions.md     # Codex → reads AGENTS.md
-  design/README.md
-  README.md
-  .gitattributes
+  design/README.md                   # Pencil design file conventions
+  README.md                          # Project README template
+  .gitattributes                     # *.pen binary handling
 ```
 
 `AGENTS.md` is the single source of truth. Each tool's config file is a one-line pointer to it. Tool-specific preferences (like Claude's `ultrathink`) stay in that tool's config only. This means the project works with any AI coding tool without maintaining separate instructions for each one.
@@ -93,11 +125,35 @@ repo-template/
 
 | File | What it covers | Who it's useful for |
 |------|---------------|-------------------|
-| **stack.md** | Technology choices and reasoning | Anyone evaluating whether this setup fits their needs |
+| **stack.md** | Technology choices and reasoning for each layer of the stack | Anyone evaluating whether this setup fits their needs |
 | **conventions.md** | TypeScript strict, functional components, naming (kebab-case files, PascalCase components), file structure, conventional commits | Anyone working in this stack who wants consistent code style |
-| **workflows.md** | `bun install` → `bun dev`, push-to-deploy via Vercel, env var management | Reference for onboarding or setting up a new machine |
-| **claude-workflow.md** | Plan mode for complex tasks, subagent strategy, verification before completion, self-improvement loops | Claude Code users who want a structured way to work with agents |
-| **agent-swarm.md** | Multi-agent parallel work — task decomposition, wave execution (2-4 agents), review loops with rotating critique lenses | Advanced. For complex builds where you want multiple agents working simultaneously |
+| **workflows.md** | `bun install` → `bun dev`, push-to-deploy via Vercel, env var management, Supabase setup | Reference for onboarding or setting up a new machine |
+| **claude-workflow.md** | Plan mode for complex tasks, subagent strategy, verification before completion, self-improvement loops, demanding elegance | Claude Code users who want a structured way to work with agents |
+| **agent-swarm.md** | Multi-agent parallel work — task decomposition, wave execution (2-4 agents), review loops with rotating critique lenses (security, UX, correctness, performance) | Advanced. For complex builds where you want multiple agents working simultaneously |
+
+## how it all connects
+
+```
+wip-scaffold my-project
+        │
+        ├─ scaffolds Next.js + deps
+        ├─ copies repo-template/
+        │    ├─ .agents/          ← you fill in project specifics
+        │    ├─ AGENTS.md         ← single source of truth for all AI tools
+        │    └─ tool configs      ← one-line pointers to AGENTS.md
+        │
+        ├─ symlinks skills/design/ → .claude/skills/design/
+        │    └─ auto-updates when you add skills to the repo
+        │
+        └─ installs /rams globally
+```
+
+During development, the flow looks like:
+
+1. **Design** — Figma MCP reads tokens + layouts, or wiretext for quick ASCII prototypes, or pencil.dev for visual design in the IDE
+2. **Build** — agents reference ui-principles for spacing/type, responsive-design for fluid layouts, framer-motion for animation, gradients for color transitions
+3. **Polish** — dialkit for tuning animation values, css-interaction-tips for micro-interactions
+4. **Review** — `/rams` for accessibility + visual consistency audit, agentation for agent-driven design annotations
 
 ## related
 

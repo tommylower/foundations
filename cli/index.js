@@ -11,7 +11,7 @@ const quiet = (cmd, opts = {}) => execSync(cmd, { stdio: "pipe", ...opts }).toSt
 const name = process.argv[2];
 
 if (!name) {
-  console.error("\n  usage: npx wip-create-designbase <project-name>\n");
+  console.error("\n  usage: npx wip-scaffold <project-name>\n");
   process.exit(1);
 }
 
@@ -187,7 +187,7 @@ console.log("\n  creating initial commit...\n");
 
 try {
   run("git add -A");
-  run('git commit -m "init: scaffold via wip-create-designbase"');
+  run('git commit -m "init: scaffold via wip-scaffold"');
 } catch {
   console.log("  git commit failed — you may need to commit manually.");
 }

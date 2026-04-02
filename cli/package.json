@@ -1,9 +1,9 @@
 {
-  "name": "wip-create-designbase",
+  "name": "wip-scaffold",
   "version": "0.0.1",
   "description": "Scaffold a design-first codebase with opinionated defaults",
   "bin": {
-    "create-designbase": "./index.js"
+    "wip-scaffold": "./index.js"
   },
   "type": "module",
   "license": "MIT",
