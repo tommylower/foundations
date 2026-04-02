@@ -4,13 +4,19 @@ import { execSync } from "child_process";
 import { cpSync, existsSync, mkdirSync, symlinkSync, writeFileSync, readFileSync, lstatSync, unlinkSync, realpathSync } from "fs";
 import { resolve, join, basename } from "path";
 import { homedir } from "os";
+import { createInterface } from "readline";
 
 const run = (cmd, opts = {}) => execSync(cmd, { stdio: "inherit", ...opts });
 const quiet = (cmd, opts = {}) => execSync(cmd, { stdio: "pipe", ...opts }).toString().trim();
 
+const prompt = (question) => {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => rl.question(question, (answer) => { rl.close(); resolve(answer.trim()); }));
+};
+
 const args = process.argv.slice(2);
 const upgradeMode = args.includes("--upgrade");
-const name = args.find((a) => !a.startsWith("--"));
+let name = args.find((a) => !a.startsWith("--"));
 
 const blue = (s) => `\x1b[38;2;56;140;247m${s}\x1b[0m`;
 const dim = (s) => `\x1b[2m${s}\x1b[0m`;
@@ -25,11 +31,12 @@ console.log(blue(`
 console.log(dim("  WAVES DONT DIE.") + "  waveinprogress.com\n");
 
 if (!name && !upgradeMode) {
-  console.error(`  usage:
-    npx wip-scaffold <project-name>     create a new project
-    npx wip-scaffold --upgrade           update current project's scaffold files
-`);
-  process.exit(1);
+  name = await prompt("  project name: ");
+  if (!name) {
+    console.error("\n  no name provided.\n");
+    process.exit(1);
+  }
+  console.log();
 }
 
 // ─── upgrade mode ──────────────────────────────────────────────────────────────
