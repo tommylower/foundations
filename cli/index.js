@@ -18,6 +18,7 @@ const prompt = (question) => {
 
 const args = process.argv.slice(2);
 const upgradeMode = args.includes("--upgrade");
+const infoMode = args.includes("--info");
 let name = args.find((a) => !a.startsWith("--"));
 
 const blue = (s) => `\x1b[38;2;56;140;247m${s}\x1b[0m`;
@@ -32,9 +33,51 @@ console.log(blue(`
 `));
 console.log(dim("  WAVES DONT DIE.") + "  waveinprogress.com\n");
 
+if (infoMode) {
+  console.log(`  ${blue("stack")}
+  ${dim("next.js (app router)")}  server components, file routing, vercel deploy
+  ${dim("bun")}                   fast installs, native typescript
+  ${dim("tailwind")}              utility-first, maps to design tokens
+  ${dim("shadcn/ui")}             accessible primitives you own as source
+  ${dim("framer motion")}         springs, layout animations, scroll reveals
+  ${dim("supabase")}              postgres, auth, edge functions, realtime
+  ${dim("typescript strict")}     catches problems before runtime
+  ${dim("oklch")}                 perceptually uniform color, consistent dark mode
+
+  ${blue("skills")} ${dim("(auto-linked, auto-update)")}
+  ${dim("ui-principles")}         spacing, type, layout, component standards, slop detection
+  ${dim("gradients")}             oklab/oklch, layering, blend modes, animation recipes
+  ${dim("responsive-design")}     fluid clamp() scales, pretext, intrinsic grids
+  ${dim("framer-motion")}         scroll reveals, stagger, hover, accordion patterns
+  ${dim("css-interaction-tips")}  button feel, entrance, jitter fix, touch targets
+  ${dim("rams")}                  WCAG accessibility + visual consistency audit
+  ${dim("dialkit")}               dev-only sliders/spring editors for tuning values
+  ${dim("reference-patterns")}    Linear, Vercel, Lovable — real production patterns
+  ${dim("figma-mcp")}             read tokens + layouts from Figma files
+  ${dim("wiretext")}              ASCII wireframes for early layout planning
+
+  ${blue("agent context")}
+  ${dim(".agents/")}              project, architecture, design, tasks, tools, skills
+  ${dim("AGENTS.md")}             single source of truth for all AI tools
+  ${dim("tool configs")}          claude, cursor, windsurf, copilot, codex
+
+  ${blue("commands")}
+  ${dim("npx wip-scaffold")}             create a new project
+  ${dim("npx wip-scaffold --upgrade")}   update scaffold files (keeps your code)
+  ${dim("npx wip-scaffold --info")}      this screen
+  ${dim("/rams")}                        run accessibility + design review
+
+  ${blue("links")}
+  ${dim("github.com/tommylower/foundations")}   scaffold + docs
+  ${dim("github.com/tommylower/skills")}       design + agent skills
+  ${dim("waveinprogress.com")}
+`);
+  process.exit(0);
+}
+
 if (!name && !upgradeMode) {
   console.log(dim("  design-first scaffold. next.js, tailwind, supabase, agent context."));
-  console.log(dim("  npx wip-scaffold --upgrade") + dim(" to update an existing project.\n"));
+  console.log(dim("  --upgrade") + dim(" to update  ") + dim("--info") + dim(" for full reference\n"));
 
   name = await prompt("  project name: ");
   if (!name) {
