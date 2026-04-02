@@ -31,15 +31,8 @@ console.log(blue(`
 console.log(dim("  WAVES DONT DIE.") + "  waveinprogress.com\n");
 
 if (!name && !upgradeMode) {
-  console.log(dim("  scaffold a design-first codebase with Next.js, Tailwind,"));
-  console.log(dim("  Supabase, and full AI agent context.\n"));
-  console.log(dim("  what it sets up:"));
-  console.log(dim("    - Next.js (app router) + TypeScript strict"));
-  console.log(dim("    - Tailwind CSS + shadcn/ui + Framer Motion"));
-  console.log(dim("    - Supabase client + Vercel Analytics"));
-  console.log(dim("    - AI agent context (.agents/, AGENTS.md, skills)"));
-  console.log(dim("    - /rams accessibility review command\n"));
-  console.log(dim("  upgrade an existing project:  npx wip-scaffold --upgrade\n"));
+  console.log(dim("  design-first scaffold. next.js, tailwind, supabase, agent context."));
+  console.log(dim("  npx wip-scaffold --upgrade") + dim(" to update an existing project.\n"));
 
   name = await prompt("  project name: ");
   if (!name) {
