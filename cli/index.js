@@ -210,54 +210,46 @@ if (existsSync(target)) {
   process.exit(1);
 }
 
-console.log(`\n  creating ${name}...\n`);
+const step = (label, detail) => console.log(`\n  ${blue("→")} ${label}  ${dim(detail)}\n`);
 
-// 1. scaffold next.js with bun
+step("scaffolding", "next.js app router, typescript strict, tailwind");
 run(`bunx create-next-app@latest ${name} --typescript --tailwind --eslint --app --src-dir --no-turbopack --no-import-alias`);
 
 process.chdir(target);
 
-// 2. install deps
-console.log("\n  installing dependencies...\n");
+step("dependencies", "framer motion, supabase, vercel analytics");
 run("bun add framer-motion @supabase/supabase-js @vercel/analytics @vercel/speed-insights");
 run("bun add -d prettier");
 
-// 2b. add vercel analytics + speed insights to layout
-console.log("\n  adding vercel analytics + speed insights...\n");
+step("analytics", "page views + real-user performance, auto-reports on vercel");
 
 const layoutPath = join(target, "src/app/layout.tsx");
 if (existsSync(layoutPath)) {
   let layout = readFileSync(layoutPath, "utf-8");
 
-  // add imports at the top, after existing imports
   const analyticsImports = `import { Analytics } from "@vercel/analytics/react";\nimport { SpeedInsights } from "@vercel/speed-insights/next";\n`;
 
   const lastImportIdx = layout.lastIndexOf("import ");
   const lastImportEnd = layout.indexOf("\n", layout.indexOf(";", lastImportIdx));
   layout = layout.slice(0, lastImportEnd + 1) + analyticsImports + layout.slice(lastImportEnd + 1);
 
-  // add components before closing </body>
   layout = layout.replace(
     /\{children\}([\s\S]*?)<\/body>/,
     `{children}\n          <Analytics />\n          <SpeedInsights />\n      </body>`
   );
 
   writeFileSync(layoutPath, layout);
-  console.log("  added <Analytics /> and <SpeedInsights /> to layout.tsx");
 }
 
-// 3. init shadcn
-console.log("\n  setting up shadcn/ui...\n");
+step("shadcn/ui", "accessible component primitives you own");
 try {
   run("bunx shadcn@latest init -y -d");
 } catch {
-  console.log("  shadcn init had issues — you may need to run `bunx shadcn@latest init` manually.");
+  console.log("  shadcn init had issues — run `bunx shadcn@latest init` manually.");
 }
 
-// 4. copy repo-template
-console.log("\n  copying agent context template...\n");
+step("agent context", ".agents/, AGENTS.md, tool configs for every AI editor");
 
-// find the template — check if we're running from the foundations repo or from npm
 const templatePaths = [
   join(import.meta.dirname, "..", "repo-template"),
   join(homedir(), "Desktop/code/tools/foundations/repo-template"),
@@ -272,14 +264,13 @@ for (const p of templatePaths) {
 }
 
 if (!templateDir) {
-  console.log("  could not find repo-template. skipping agent context setup.");
-  console.log("  you can copy it manually from https://github.com/tommylower/foundations");
+  console.log("  could not find repo-template. skipping.");
 } else {
   cpSync(templateDir, target, { recursive: true, force: false });
-  console.log("  .agents/, AGENTS.md, .claude/, .cursor/, .windsurfrules, .github/ copied.");
 }
 
-// 5. create .env.example
+step("environment", ".env.example + .env.local with supabase placeholders");
+
 writeFileSync(
   join(target, ".env.example"),
   `# supabase
@@ -289,13 +280,11 @@ SUPABASE_SERVICE_ROLE_KEY=
 `
 );
 
-// 6. create .env.local from example
 writeFileSync(
   join(target, ".env.local"),
   readFileSync(join(target, ".env.example"), "utf-8")
 );
 
-// 7. add .env.local to .gitignore if not already there
 const gitignorePath = join(target, ".gitignore");
 if (existsSync(gitignorePath)) {
   const gitignore = readFileSync(gitignorePath, "utf-8");
@@ -304,8 +293,7 @@ if (existsSync(gitignorePath)) {
   }
 }
 
-// 8. link skills library
-console.log("\n  linking skills library...\n");
+step("skills", "design knowledge library, auto-updates when you add new skills");
 
 const skillsPaths = [
   join(target, "skills"),
@@ -322,19 +310,16 @@ for (const p of skillsPaths) {
 }
 
 if (!skillsDir) {
-  // try cloning
   const defaultSkillsPath = join(homedir(), "Desktop/code/tools/skills");
   try {
-    console.log("  cloning tommylower/skills...");
     run(`git clone https://github.com/tommylower/skills.git "${defaultSkillsPath}"`, { stdio: "pipe" });
     skillsDir = defaultSkillsPath;
   } catch {
-    console.log("  could not clone skills repo. you can set it up later.");
+    console.log("  could not clone skills repo. set up later.");
   }
 }
 
 if (skillsDir) {
-  // symlink into .claude/skills/ for claude code
   const claudeSkillsDir = join(target, ".claude", "skills");
   mkdirSync(claudeSkillsDir, { recursive: true });
 
@@ -342,17 +327,11 @@ if (skillsDir) {
   if (existsSync(designSkills)) {
     try {
       symlinkSync(designSkills, join(claudeSkillsDir, "design"));
-      console.log(`  linked design skills from ${skillsDir}`);
-    } catch {
-      console.log("  could not symlink design skills.");
-    }
+    } catch {}
   }
-
-  console.log(`  skills directory: ${skillsDir}`);
 }
 
-// 9. install rams command
-console.log("\n  installing /rams command...\n");
+step("/rams", "accessibility + visual design review command");
 
 const ramsSource = skillsDir ? join(skillsDir, "design/rams/SKILL.md") : null;
 const claudeCommandsDir = join(homedir(), ".claude", "commands");
@@ -362,35 +341,73 @@ if (ramsSource && existsSync(ramsSource)) {
   const ramsDest = join(claudeCommandsDir, "rams.md");
   if (!existsSync(ramsDest)) {
     cpSync(ramsSource, ramsDest);
-    console.log("  /rams command installed globally.");
-  } else {
-    console.log("  /rams already installed.");
   }
-} else {
-  console.log("  skills not available — skipping /rams install.");
 }
 
-// 10. initial commit
-console.log("\n  creating initial commit...\n");
+step("landing page", "WIP welcome page at localhost:3000, delete when ready");
+
+// replace next.js default page with WIP landing
+const pagePath = join(target, "src/app/page.tsx");
+writeFileSync(pagePath, `export default function Home() {
+  return (
+    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center font-mono">
+      <pre className="text-[#388cf7] text-sm leading-tight mb-8">
+{\`  ██     ██ ██ ██████
+  ██     ██ ██ ██   ██
+  ██  █  ██ ██ ██████
+  ██ ███ ██ ██ ██
+   ███ ███  ██ ██\`}
+      </pre>
+      <p className="text-neutral-400 text-sm tracking-wide mb-1">WAVES DONT DIE.</p>
+      <a
+        href="https://waveinprogress.com"
+        className="text-neutral-500 text-xs hover:text-white transition-colors"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        waveinprogress.com
+      </a>
+      <div className="mt-12 text-neutral-600 text-xs text-center space-y-1">
+        <p>scaffolded with wip-scaffold</p>
+        <p>delete this file and start building</p>
+      </div>
+    </div>
+  );
+}
+`);
+
+// clean up default next.js css (remove template styles, keep tailwind directives)
+const globalsPath = join(target, "src/app/globals.css");
+if (existsSync(globalsPath)) {
+  const globals = readFileSync(globalsPath, "utf-8");
+  // keep only tailwind directives and css variables, strip everything else
+  const lines = globals.split("\n");
+  const kept = [];
+  let inTailwind = false;
+  for (const line of lines) {
+    if (line.startsWith("@import") || line.startsWith("@tailwind") || line.startsWith("@layer")) inTailwind = true;
+    if (inTailwind || line.trim() === "" || line.startsWith(":root") || line.startsWith("@media") || line.includes("--")) {
+      kept.push(line);
+    }
+  }
+  // just write clean tailwind imports
+  writeFileSync(globalsPath, `@import "tailwindcss";\n`);
+}
+
+step("commit", "initial git commit");
 
 try {
   run("git add -A");
   run('git commit -m "init: scaffold via wip-scaffold"');
 } catch {
-  console.log("  git commit failed — you may need to commit manually.");
+  console.log("  git commit failed — commit manually.");
 }
 
 console.log(`
-  done. your project is ready:
+  ${blue("done.")} your project is ready:
 
     cd ${name}
     bun dev
 
-  open http://localhost:3000
-
-  vercel analytics and speed insights are installed and will
-  report automatically once deployed to vercel.
-
-  to enable vercel agent (AI code review + incident investigation):
-  https://vercel.com/docs/agent
+  open ${dim("http://localhost:3000")}
 `);
