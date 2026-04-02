@@ -26,8 +26,8 @@ console.log(dim("  WAVES DONT DIE.") + "  waveinprogress.com\n");
 
 if (!name && !upgradeMode) {
   console.error(`  usage:
-    bunx wip-scaffold <project-name>     create a new project
-    bunx wip-scaffold --upgrade           update current project's scaffold files
+    npx wip-scaffold <project-name>     create a new project
+    npx wip-scaffold --upgrade           update current project's scaffold files
 `);
   process.exit(1);
 }
