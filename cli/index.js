@@ -41,10 +41,6 @@ if (!name && !upgradeMode) {
     console.error("\n  no name provided.\n");
     process.exit(1);
   }
-
-  const dir = await prompt(`  directory ${dim(`(${process.cwd()})`)}: `);
-  if (dir) process.chdir(resolve(dir));
-
   console.log();
 }
 
