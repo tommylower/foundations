@@ -12,9 +12,10 @@ const args = process.argv.slice(2);
 const upgradeMode = args.includes("--upgrade");
 const name = args.find((a) => !a.startsWith("--"));
 
+console.log("\n  WAVES DONT DIE. WAVEINPROGRESS.COM\n");
+
 if (!name && !upgradeMode) {
-  console.error(`
-  usage:
+  console.error(`  usage:
     npx wip-scaffold <project-name>     create a new project
     npx wip-scaffold --upgrade           update current project's scaffold files
 `);
