@@ -11,7 +11,10 @@ const quiet = (cmd, opts = {}) => execSync(cmd, { stdio: "pipe", ...opts }).toSt
 
 const prompt = (question) => {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
-  return new Promise((resolve) => rl.question(question, (answer) => { rl.close(); resolve(answer.trim()); }));
+  return new Promise((res) => {
+    rl.question(question, (a) => { rl.close(); res(a.trim()); });
+    rl.on("close", () => res(""));
+  });
 };
 
 const args = process.argv.slice(2);
@@ -39,6 +42,10 @@ if (!name && !upgradeMode) {
     console.error("\n  no name provided.\n");
     process.exit(1);
   }
+
+  const dir = await prompt(`  directory ${dim(`(${process.cwd()})`)}: `);
+  if (dir) process.chdir(resolve(dir));
+
   console.log();
 }
 
