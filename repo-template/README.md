@@ -81,6 +81,20 @@ if you're handing this project to another team or developer:
 5. **third-party services**: transfer or share API keys for any integrations
 6. **agent context**: the `.agents/` directory contains project knowledge for AI-assisted development. point their tools at it.
 
+## keeping skills up to date
+
+this project uses design and engineering skills from [tommylower/skills](https://github.com/tommylower/skills). skills are updated independently of your project code — new patterns, fixes, and techniques are added over time.
+
+to pull the latest skills and scaffold files:
+
+```bash
+npx wip-scaffold --upgrade
+```
+
+this updates skills, agent configs, and tool pointers. it never touches your source code, design files, or project context in `.agents/`.
+
+run this periodically or whenever you see new skills announced. you can check what's changed at [github.com/tommylower/skills](https://github.com/tommylower/skills).
+
 ## development tools
 
 ### pencil.dev

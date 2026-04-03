@@ -28,6 +28,8 @@ agents check these paths in order:
 
 if no skills directory is found, `.agents/` contains everything needed.
 
+to pull the latest skills: `npx wip-scaffold --upgrade`
+
 ## conventions
 
 - conventional commits (`feat:`, `fix:`, `chore:`, `docs:`)

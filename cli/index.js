@@ -63,7 +63,7 @@ if (infoMode) {
 
   ${blue("commands")}
   ${dim("npx wip-scaffold")}             create a new project
-  ${dim("npx wip-scaffold --upgrade")}   update scaffold files (keeps your code)
+  ${dim("npx wip-scaffold --upgrade")}   pull latest skills + update scaffold files
   ${dim("npx wip-scaffold --info")}      this screen
   ${dim("/rams")}                        run accessibility + design review
 
@@ -246,9 +246,9 @@ if (upgradeMode) {
   done. upgraded scaffold files only — source code and design files untouched.
 
   what was updated:
+    - skills (pulled latest from GitHub + re-linked)
     - AGENTS.md, tool configs (.claude, .cursor, .windsurfrules, .github)
     - .gitattributes
-    - skills symlink
     - /rams command
 
   what was NOT touched:
@@ -256,6 +256,8 @@ if (upgradeMode) {
     - src/ (your code)
     - design/ (your design files)
     - package.json, node_modules, .env
+
+  check what's new: ${dim("https://github.com/tommylower/skills")}
 `);
   process.exit(0);
 }
