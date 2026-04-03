@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execSync } from "child_process";
-import { cpSync, existsSync, mkdirSync, symlinkSync, writeFileSync, readFileSync, lstatSync, unlinkSync, realpathSync } from "fs";
+import { cpSync, existsSync, mkdirSync, symlinkSync, writeFileSync, readFileSync, lstatSync, unlinkSync, realpathSync, readdirSync } from "fs";
 import { resolve, join, basename } from "path";
 import { homedir } from "os";
 import { createInterface } from "readline";
@@ -185,25 +185,29 @@ if (upgradeMode) {
     const claudeSkillsDir = join(target, ".claude", "skills");
     mkdirSync(claudeSkillsDir, { recursive: true });
 
-    const symlinkPath = join(claudeSkillsDir, "design");
-    const designSkills = join(skillsDir, "design");
+    // link all skill directories found in the skills repo
+    for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
+      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+      const symlinkPath = join(claudeSkillsDir, entry.name);
+      const sourcePath = join(skillsDir, entry.name);
 
-    // remove broken or outdated symlink so we can re-create it
-    try {
-      const stat = lstatSync(symlinkPath);
-      if (stat.isSymbolicLink()) {
-        unlinkSync(symlinkPath);
-      }
-    } catch {
-      // doesn't exist, that's fine
-    }
-
-    if (!existsSync(symlinkPath) && existsSync(designSkills)) {
+      // remove broken or outdated symlink so we can re-create it
       try {
-        symlinkSync(designSkills, symlinkPath);
-        console.log(`  linked design skills from ${skillsDir}`);
+        const stat = lstatSync(symlinkPath);
+        if (stat.isSymbolicLink()) {
+          unlinkSync(symlinkPath);
+        }
       } catch {
-        console.log("  skills symlink already exists.");
+        // doesn't exist, that's fine
+      }
+
+      if (!existsSync(symlinkPath)) {
+        try {
+          symlinkSync(sourcePath, symlinkPath);
+          console.log(`  linked ${entry.name} skills`);
+        } catch {
+          console.log(`  ${entry.name} symlink already exists.`);
+        }
       }
     }
 
@@ -392,10 +396,11 @@ if (skillsDir) {
   const claudeSkillsDir = join(target, ".claude", "skills");
   mkdirSync(claudeSkillsDir, { recursive: true });
 
-  const designSkills = join(skillsDir, "design");
-  if (existsSync(designSkills)) {
+  // link all skill directories found in the skills repo
+  for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
     try {
-      symlinkSync(designSkills, join(claudeSkillsDir, "design"));
+      symlinkSync(join(skillsDir, entry.name), join(claudeSkillsDir, entry.name));
     } catch {}
   }
 }
