@@ -47,7 +47,7 @@ if (infoMode) {
   ${blue("skills")} ${dim("(auto-linked, auto-update)")}
   ${dim("ui-principles")}         spacing, type, layout, component standards, slop detection
   ${dim("gradients")}             oklab/oklch, layering, blend modes, animation recipes
-  ${dim("responsive-design")}     fluid clamp() scales, pretext, intrinsic grids
+  ${dim("responsive-design")}     fluid scales, container queries, AI pitfalls, testing
   ${dim("framer-motion")}         scroll reveals, stagger, hover, accordion patterns
   ${dim("css-interaction-tips")}  button feel, entrance, jitter fix, touch targets
   ${dim("rams")}                  WCAG accessibility + visual consistency audit
@@ -165,7 +165,7 @@ if (upgradeMode) {
     }
   }
 
-  // ── re-link skills symlink ──
+  // ── pull latest skills from GitHub ──
 
   const skillsPaths = [
     join(target, "skills"),
@@ -178,6 +178,22 @@ if (upgradeMode) {
     if (existsSync(p)) {
       skillsDir = p;
       break;
+    }
+  }
+
+  if (skillsDir && existsSync(join(skillsDir, ".git"))) {
+    try {
+      const before = quiet(`git -C "${skillsDir}" rev-parse HEAD`);
+      run(`git -C "${skillsDir}" pull --ff-only`, { stdio: "pipe" });
+      const after = quiet(`git -C "${skillsDir}" rev-parse HEAD`);
+      if (before !== after) {
+        const count = quiet(`git -C "${skillsDir}" log --oneline ${before}..${after} | wc -l`).trim();
+        console.log(`  pulled ${count} new commit(s) to skills`);
+      } else {
+        console.log("  skills already up to date");
+      }
+    } catch {
+      console.log("  could not pull skills (offline or merge needed). using local copy.");
     }
   }
 

@@ -73,7 +73,7 @@ Run `npx wip-scaffold --upgrade` from an existing project root to pull in the la
 - `AGENTS.md` — universal agent instructions
 - `.claude/CLAUDE.md`, `.cursor/rules`, `.windsurfrules`, `.github/copilot-instructions.md`, `.github/codex-instructions.md` — tool config pointers
 - `.gitattributes`
-- Skills symlink (re-linked to latest)
+- Skills — pulls latest from GitHub (`git pull`), then re-links
 - `/rams` command (re-installed globally)
 
 **Never touched:**
@@ -83,9 +83,21 @@ Run `npx wip-scaffold --upgrade` from an existing project root to pull in the la
 - `package.json`, `node_modules`, `.env` — your dependencies and environment
 - Any `.agents/` template files you've already filled in (only creates missing ones)
 
+## staying up to date
+
+Skills and scaffold files are updated independently of your project code. To pull in the latest:
+
+```bash
+npx wip-scaffold --upgrade
+```
+
+This pulls the latest skills from GitHub, re-links them, and updates scaffold infrastructure files. Your source code, design files, and project context are never touched.
+
+If you're working across multiple projects, run `--upgrade` in each one. It takes a few seconds and keeps all your projects on the same skill versions.
+
 ## skills
 
-Skills are markdown files that give agents specialized knowledge. The CLI symlinks the entire `design/` directory from [tommylower/skills](https://github.com/tommylower/skills) into each project — so adding a skill to the repo means every project gets it immediately, no re-scaffolding needed.
+Skills are markdown files that give agents specialized knowledge. The CLI symlinks the `design/` directory from [tommylower/skills](https://github.com/tommylower/skills) into each project. Running `--upgrade` pulls the latest skills from GitHub, so every project stays current.
 
 ### design skills
 
@@ -93,7 +105,7 @@ Skills are markdown files that give agents specialized knowledge. The CLI symlin
 |-------|---------------|-------------------|
 | **ui-principles** | Spacing scale (4–120px), type hierarchy (display→micro), layout rules, 12-column grid, responsive breakpoints, component standards, AI slop detection checklist | Foundation for all design work. Stops agents from inventing arbitrary values or producing generic AI-looking output. |
 | **gradients** | Color spaces (oklab/oklch/sRGB), linear/radial/conic gradients, color hints, layering with blend modes, animation performance, production recipes | Any gradient work. Defaults agents to oklab instead of muddy sRGB blends. |
-| **responsive-design** | Fluid type/spacing with `clamp()`, intrinsic grids, Pretext for canvas-based text measurement, touch/hover/motion media queries, Framer Motion layout transitions | Responsive layouts. Teaches recomposition over shrinking. |
+| **responsive-design** | Three-layer escalation model (fluid → container queries → media queries), `clamp()` scales, intrinsic grids, CSS subgrid, container queries with Tailwind `@container`, modern viewport units (`svh`/`dvh`), safe area insets, `:has()`, logical properties, 16-point AI pitfalls checklist, testing guidance (drag-resize, priority viewports, 10-point check), Pretext for text measurement, Framer Motion layout transitions | Responsive layouts. Teaches recomposition over shrinking. Catches common AI responsive failures before shipping. |
 | **framer-motion** | Scroll reveals, staggered lists, hover/tap interactions, accordions, page transitions, spring values, timing guidelines | Any animation. Ready-to-use patterns with tested spring stiffness and damping. |
 | **css-interaction-tips** | Button press feel (`scale(0.97)`), smooth entrances, jitter fixes (`will-change`), transform-origin for popovers, touch target expansion, hover-only media queries | Micro-interaction polish. Quick lookup table format. |
 | **rams** | WCAG 2.1 accessibility audit + visual consistency review. Checks contrast (4.5:1), touch targets (44px), aria-labels, spacing consistency, z-index, overflow. Returns scored report with line numbers. | Run via `/rams` after building any component. |
