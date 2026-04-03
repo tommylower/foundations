@@ -40,6 +40,19 @@
 ## component patterns
 <!-- how components are structured, naming, composition -->
 
+## responsive layout decisions
+<!-- document choices for these common patterns when they appear in your project -->
+<!-- each is a design fork with no single correct answer - decide early, not during implementation -->
+
+<!-- sidebar with mixed content: (a) drawer on demand, (b) tab bar, or (c) inline accordion? -->
+<!-- data table with 6+ columns: (a) horizontal scroll + sticky first col, (b) card stack, or (c) priority columns + expand? -->
+<!-- multi-panel dashboard: (a) tabs (one at a time), (b) stacked with anchor nav, or (c) collapsible summaries? -->
+<!-- hero with complex visuals: (a) simplified adaptation, (b) different mobile design, or (c) headline + CTA only? -->
+<!-- multiple sticky elements: which ones truly need to stay visible while scrolling? total sticky height on mobile? -->
+<!-- complex navigation (15+ items): (a) hamburger + accordion, (b) bottom tab bar, or (c) search-first? -->
+<!-- form layout: (a) single column stack, (b) stepped wizard, or (c) accordion sections? -->
+<!-- content grid (bento/masonry): (a) full-width stack, (b) horizontal scroll groups, or (c) 2-column mini grid? -->
+
 ## shared references
 for foundational design patterns, see:
 - ~/Desktop/code/tools/skills/design/ui-principles/
