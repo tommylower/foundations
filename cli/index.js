@@ -16,6 +16,15 @@ const prompt = (question) => {
   });
 };
 
+const isSkillsAuthor = (dir) => {
+  try {
+    const remote = quiet(`git -C "${dir}" remote get-url origin`);
+    return remote.includes("tommylower/skills");
+  } catch {
+    return false;
+  }
+};
+
 const args = process.argv.slice(2);
 const upgradeMode = args.includes("--upgrade");
 const infoMode = args.includes("--info");
@@ -249,10 +258,13 @@ if (upgradeMode) {
       console.log("  try deleting ~/.skills and running --upgrade again to re-clone.");
     }
 
-    // add README to skills directory if missing
-    const wipReadmePath = join(skillsDir, "WIP-README.md");
-    if (!existsSync(wipReadmePath)) {
-      writeFileSync(wipReadmePath, `# wip skills
+    const isAuthor = isSkillsAuthor(skillsDir);
+
+    // add README to skills directory if missing (only for non-authors)
+    if (!isAuthor) {
+      const wipReadmePath = join(skillsDir, "WIP-README.md");
+      if (!existsSync(wipReadmePath)) {
+        writeFileSync(wipReadmePath, `# wip skills
 
 these skills were added by [wip-scaffold](https://github.com/tommylower/wip-scaffold).
 they're symlinked into your project at \`.claude/skills/wip/\`.
@@ -278,45 +290,48 @@ under \`~/.skills/\` — the structure is flexible.
 to stop wip-scaffold from managing this directory, just remove \`~/.skills/\`
 and the CLI will skip the skills step.
 `);
-      console.log("  added WIP-README.md to skills directory");
+        console.log("  added WIP-README.md to skills directory");
+      }
     }
   }
 
   if (skillsDir) {
     const claudeSkillsDir = join(target, ".claude", "skills");
     mkdirSync(claudeSkillsDir, { recursive: true });
+    const isAuthor = isSkillsAuthor(skillsDir);
 
-    // clean up old per-directory symlinks (migrating to single wip/ link)
+    // clean up all existing skill symlinks before relinking
     for (const entry of readdirSync(claudeSkillsDir, { withFileTypes: true })) {
       const linkPath = join(claudeSkillsDir, entry.name);
-      if (entry.name === "wip") continue;
       try {
         const stat = lstatSync(linkPath);
         if (stat.isSymbolicLink()) {
           unlinkSync(linkPath);
-          console.log(`  removed old symlink: ${entry.name}`);
         }
       } catch {
         // skip
       }
     }
 
-    // link entire skills repo as .claude/skills/wip
-    const wipLink = join(claudeSkillsDir, "wip");
-    try {
-      const stat = lstatSync(wipLink);
-      if (stat.isSymbolicLink()) {
-        unlinkSync(wipLink);
+    if (isAuthor) {
+      // author: link each directory flat (no namespace)
+      for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
+        if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+        try {
+          symlinkSync(join(skillsDir, entry.name), join(claudeSkillsDir, entry.name));
+          console.log(`  linked ${entry.name} skills`);
+        } catch {
+          console.log(`  ${entry.name} symlink already exists.`);
+        }
       }
-    } catch {
-      // doesn't exist
-    }
-
-    try {
-      symlinkSync(skillsDir, wipLink);
-      console.log("  linked skills → .claude/skills/wip");
-    } catch {
-      console.log("  could not create wip symlink");
+    } else {
+      // everyone else: link as .claude/skills/wip
+      try {
+        symlinkSync(skillsDir, join(claudeSkillsDir, "wip"));
+        console.log("  linked skills → .claude/skills/wip");
+      } catch {
+        console.log("  could not create wip symlink");
+      }
     }
 
     console.log(`  skills directory: ${skillsDir}`);
@@ -663,11 +678,21 @@ if (skillsDir) {
   const claudeSkillsDir = join(target, ".claude", "skills");
   mkdirSync(claudeSkillsDir, { recursive: true });
 
-  // link entire skills repo as .claude/skills/wip
-  const wipLink = join(claudeSkillsDir, "wip");
-  try {
-    symlinkSync(skillsDir, wipLink);
-  } catch {}
+  if (isSkillsAuthor(skillsDir)) {
+    // author: link each directory flat (no namespace)
+    for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
+      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+      try {
+        symlinkSync(join(skillsDir, entry.name), join(claudeSkillsDir, entry.name));
+      } catch {}
+    }
+  } else {
+    // everyone else: link as .claude/skills/wip
+    const wipLink = join(claudeSkillsDir, "wip");
+    try {
+      symlinkSync(skillsDir, wipLink);
+    } catch {}
+  }
 }
 
 step("commands", "/rams (accessibility review) + /interview (agent behavior profile)");
