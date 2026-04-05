@@ -1,6 +1,6 @@
 {
   "name": "wip-scaffold",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Scaffold a design-first codebase with opinionated defaults",
   "bin": {
     "wip-scaffold": "./cli/index.js"

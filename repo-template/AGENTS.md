@@ -21,11 +21,10 @@ for architecture decisions, check `.agents/architecture.md` first.
 this project supports an optional skills library — markdown files that provide
 cross-project knowledge (design patterns, engineering conventions, motion references).
 
-agents check these paths in order:
-- `./skills/` — project-local (committed to repo)
-- `~/.skills/` — user-global (private)
+wip-scaffold skills are linked at `.claude/skills/wip/`. your own skills can live
+anywhere else under `.claude/skills/` without conflicts.
 
-if no skills directory is found, `.agents/` contains everything needed.
+if no skills are linked, `.agents/` contains everything needed.
 
 to pull the latest skills: `npx wip-scaffold --upgrade`
 

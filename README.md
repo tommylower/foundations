@@ -55,7 +55,7 @@ What it does:
    - `design/` — directory for Pencil design files
    - `.gitattributes` — binary handling for `.pen` files
 7. Create `.env.example` with Supabase placeholders
-8. Detect or clone [tommylower/skills](https://github.com/tommylower/skills), symlink all skill directories into `.claude/skills/`
+8. Detect or clone [tommylower/skills](https://github.com/tommylower/skills), symlink as `.claude/skills/wip/`
 9. Install `/rams` command (accessibility + visual design review)
 10. Install `/interview` command (agent behavior profile generator)
 11. Ask if you want to personalize agent behavior (runs the interviewer)
@@ -94,7 +94,7 @@ If you're working across multiple projects, run `--upgrade` in each one. It take
 
 ## skills
 
-Skills are markdown files that give agents specialized knowledge. The CLI symlinks every top-level directory from [tommylower/skills](https://github.com/tommylower/skills) into `.claude/skills/`. Running `--upgrade` pulls the latest and re-links, so every project stays current.
+Skills are markdown files that give agents specialized knowledge. The CLI symlinks [tommylower/skills](https://github.com/tommylower/skills) into `.claude/skills/wip/`. Running `--upgrade` pulls the latest and re-links. Your own skills can live anywhere else under `.claude/skills/` without conflicts.
 
 The skills repo is organized into:
 
@@ -146,12 +146,12 @@ wip-scaffold my-project
         │    ├─ AGENTS.md         ← single source of truth for all AI tools
         │    └─ tool configs      ← one-line pointers to AGENTS.md
         │
-        ├─ symlinks skills/* → .claude/skills/*
-        │    ├─ design/           UI, motion, accessibility, design references
-        │    ├─ dev-tools/        agentation, dialkit
-        │    ├─ workflows/        claude-workflow, agent-swarm, agent-interviewer
-        │    ├─ design-systems/   reference systems (on request)
-        │    └─ marketing/        copywriting, SEO, CRO, ads
+        ├─ symlinks ~/.skills/ → .claude/skills/wip/
+        │    ├─ wip/design/       UI, motion, accessibility, design references
+        │    ├─ wip/dev-tools/    agentation, dialkit
+        │    ├─ wip/workflows/    claude-workflow, agent-swarm, agent-interviewer
+        │    ├─ wip/design-systems/ reference systems (on request)
+        │    └─ wip/marketing/    copywriting, SEO, CRO, ads
         │
         ├─ installs /rams + /interview globally
         │

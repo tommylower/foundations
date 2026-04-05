@@ -55,6 +55,6 @@
 
 ## shared references
 for foundational design patterns, see the skills library:
-- skills/design/ui-principles/
-- skills/design/framer-motion/
-- skills/design/reference-patterns/
+- wip/design/ui-principles/
+- wip/design/framer-motion/
+- wip/design/reference-patterns/

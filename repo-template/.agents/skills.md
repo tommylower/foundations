@@ -24,14 +24,16 @@ this project is built to be agent-assisted from the ground up. the .agents/ dire
 2. organize by domain:
 
    skills/
-     design/              # design system, UI principles, motion, references
-     dev-tools/           # agentation, dialkit
-     workflows/           # claude workflow, agent swarm, codex review
-     marketing/           # brand voice, content strategy, copy patterns
+     wip/                 # skills from wip-scaffold (auto-linked)
+       design/            # design system, UI principles, motion, references
+       dev-tools/         # agentation, dialkit
+       workflows/         # claude workflow, agent swarm, codex review
+       marketing/         # brand voice, content strategy, copy patterns
+     my-skills/           # your own skills (create whatever structure you want)
 
 3. each skill is a markdown file or a folder with a SKILL.md inside:
 
-   skills/design/framer-motion/
+   skills/wip/design/framer-motion/
      SKILL.md             # the skill content
      examples/            # optional supporting files
 

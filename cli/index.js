@@ -45,9 +45,9 @@ if (infoMode) {
   ${dim("typescript strict")}     catches problems before runtime
   ${dim("oklch")}                 perceptually uniform color, consistent dark mode
 
-  ${blue("skills")} ${dim("(auto-linked, auto-update)")}
+  ${blue("skills")} ${dim("(linked at .claude/skills/wip/)")}
 
-  ${dim("design/")}
+  ${dim("wip/design/")}
   ${dim("  ui-principles")}       spacing, type, layout, component standards, slop detection
   ${dim("  gradients")}           oklab/oklch, layering, blend modes, animation recipes
   ${dim("  responsive-design")}   fluid scales, container queries, AI pitfalls, testing
@@ -58,11 +58,11 @@ if (infoMode) {
   ${dim("  figma-mcp")}           read tokens + layouts from Figma files
   ${dim("  wiretext")}            ASCII wireframes for early layout planning
 
-  ${dim("dev-tools/")}
+  ${dim("wip/dev-tools/")}
   ${dim("  agentation")}          design annotation toolbar + MCP agent sync
   ${dim("  dialkit")}             dev-only sliders/spring editors for tuning values
 
-  ${dim("workflows/")}
+  ${dim("wip/workflows/")}
   ${dim("  claude-workflow")}     plan mode, subagents, verification, context management
   ${dim("  agent-swarm")}         parallel agents, review loops, adversarial dual-review
   ${dim("  codex-review")}        cross-model review via Codex plugin
@@ -245,8 +245,40 @@ if (upgradeMode) {
     const expected = ["design", "dev-tools", "workflows"];
     const missing = expected.filter((d) => !existsSync(join(skillsDir, d)));
     if (missing.length > 0) {
-      console.log(`  warning: missing skill directories: ${missing.join(", ")}`);
+      console.log(`  warning: missing skill directories in ~/.skills/: ${missing.join(", ")}`);
       console.log("  try deleting ~/.skills and running --upgrade again to re-clone.");
+    }
+
+    // add README to skills directory if missing
+    const wipReadmePath = join(skillsDir, "WIP-README.md");
+    if (!existsSync(wipReadmePath)) {
+      writeFileSync(wipReadmePath, `# wip skills
+
+these skills were added by [wip-scaffold](https://github.com/tommylower/wip-scaffold).
+they're symlinked into your project at \`.claude/skills/wip/\`.
+
+## what's here
+
+- **design/** — ui principles, framer motion, gradients, responsive design, accessibility (rams), reference patterns
+- **dev-tools/** — agentation, dialkit
+- **workflows/** — claude workflow, agent swarm, codex review, agent interviewer, conventions
+
+## not mine?
+
+skills with attribution are noted in their SKILL.md files.
+dialkit is by [josh puckett](https://github.com/joshpuckett/dialkit).
+agentation is by [tommy lower](https://agentation.dev).
+
+## don't want these?
+
+delete this folder or move individual skills elsewhere.
+any skill folder with a SKILL.md inside will work wherever you put it
+under \`~/.skills/\` — the structure is flexible.
+
+to stop wip-scaffold from managing this directory, just remove \`~/.skills/\`
+and the CLI will skip the skills step.
+`);
+      console.log("  added WIP-README.md to skills directory");
     }
   }
 
@@ -254,44 +286,37 @@ if (upgradeMode) {
     const claudeSkillsDir = join(target, ".claude", "skills");
     mkdirSync(claudeSkillsDir, { recursive: true });
 
-    // clean up orphaned symlinks (directories removed from skills repo)
+    // clean up old per-directory symlinks (migrating to single wip/ link)
     for (const entry of readdirSync(claudeSkillsDir, { withFileTypes: true })) {
       const linkPath = join(claudeSkillsDir, entry.name);
+      if (entry.name === "wip") continue;
       try {
         const stat = lstatSync(linkPath);
-        if (stat.isSymbolicLink() && !existsSync(linkPath)) {
+        if (stat.isSymbolicLink()) {
           unlinkSync(linkPath);
-          console.log(`  removed orphaned symlink: ${entry.name}`);
+          console.log(`  removed old symlink: ${entry.name}`);
         }
       } catch {
         // skip
       }
     }
 
-    // link all skill directories found in the skills repo
-    for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
-      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
-      const symlinkPath = join(claudeSkillsDir, entry.name);
-      const sourcePath = join(skillsDir, entry.name);
-
-      // remove broken or outdated symlink so we can re-create it
-      try {
-        const stat = lstatSync(symlinkPath);
-        if (stat.isSymbolicLink()) {
-          unlinkSync(symlinkPath);
-        }
-      } catch {
-        // doesn't exist, that's fine
+    // link entire skills repo as .claude/skills/wip
+    const wipLink = join(claudeSkillsDir, "wip");
+    try {
+      const stat = lstatSync(wipLink);
+      if (stat.isSymbolicLink()) {
+        unlinkSync(wipLink);
       }
+    } catch {
+      // doesn't exist
+    }
 
-      if (!existsSync(symlinkPath)) {
-        try {
-          symlinkSync(sourcePath, symlinkPath);
-          console.log(`  linked ${entry.name} skills`);
-        } catch {
-          console.log(`  ${entry.name} symlink already exists.`);
-        }
-      }
+    try {
+      symlinkSync(skillsDir, wipLink);
+      console.log("  linked skills → .claude/skills/wip");
+    } catch {
+      console.log("  could not create wip symlink");
     }
 
     console.log(`  skills directory: ${skillsDir}`);
@@ -458,7 +483,7 @@ if (upgradeMode) {
   done. upgraded scaffold files only — source code and design files untouched.
 
   what was updated:
-    - skills (pulled latest from GitHub + re-linked)
+    - skills (pulled latest from GitHub, linked at .claude/skills/wip/)
     - AGENTS.md, tool configs (.claude, .cursor, .windsurfrules, .github)
     - .gitattributes
     - dev tools in layout (agentation + dialkit, removed interface-kit if present)
@@ -638,13 +663,11 @@ if (skillsDir) {
   const claudeSkillsDir = join(target, ".claude", "skills");
   mkdirSync(claudeSkillsDir, { recursive: true });
 
-  // link all skill directories found in the skills repo
-  for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
-    if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
-    try {
-      symlinkSync(join(skillsDir, entry.name), join(claudeSkillsDir, entry.name));
-    } catch {}
-  }
+  // link entire skills repo as .claude/skills/wip
+  const wipLink = join(claudeSkillsDir, "wip");
+  try {
+    symlinkSync(skillsDir, wipLink);
+  } catch {}
 }
 
 step("commands", "/rams (accessibility review) + /interview (agent behavior profile)");

@@ -21,7 +21,10 @@ start here. this directory contains everything an AI agent needs to work on this
 reusable patterns and references live in the shared skills library.
 agents check for a skills directory at `./skills/` or `~/.skills/`.
 
-- design patterns: `skills/design/`
-- dev tools: `skills/dev-tools/`
-- workflows: `skills/workflows/`
-- marketing: `skills/marketing/`
+wip-scaffold links its skills at `.claude/skills/wip/`:
+- design patterns: `wip/design/`
+- dev tools: `wip/dev-tools/`
+- workflows: `wip/workflows/`
+- marketing: `wip/marketing/`
+
+your own skills can live anywhere else under `.claude/skills/`.

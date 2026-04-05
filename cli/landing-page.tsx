@@ -478,7 +478,7 @@ export default function Home() {
           </div>
           <p className={`${c.body} text-[13px] leading-relaxed mb-5`}>
             Markdown knowledge packs linked into{" "}
-            <span className={c.accent}>.claude/skills/</span>. Agents
+            <span className={c.accent}>.claude/skills/wip/</span>. Agents
             reference these automatically for design patterns, tooling, and workflows.
           </p>
           <div className={`${c.cardBg} border ${c.cardBorder} rounded-lg overflow-hidden`}>
