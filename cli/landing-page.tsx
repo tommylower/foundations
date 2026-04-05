@@ -47,6 +47,32 @@ const stack = [
   ["OKLCH", "perceptually uniform color, consistent dark mode"],
 ];
 
+const skills = [
+  ["DESIGN", [
+    ["ui-principles", "spacing, type, layout, component standards"],
+    ["rams", "WCAG accessibility + visual consistency audit"],
+    ["framer-motion", "scroll reveals, stagger, hover, accordion patterns"],
+    ["responsive-design", "fluid scales, container queries, intrinsic grids"],
+    ["gradients", "oklab/oklch, layering, blend modes, animation"],
+    ["css-interaction-tips", "button feel, smooth entrances, touch targets"],
+    ["reference-patterns", "Linear, Vercel, Lovable production patterns"],
+  ]],
+  ["DEV TOOLS", [
+    ["agentation", "annotation toolbar + MCP agent sync"],
+    ["interface-craft", "visual styling overlay, writes back to code"],
+    ["dialkit", "sliders + spring editors for tuning values"],
+  ]],
+  ["WORKFLOWS", [
+    ["agent-interviewer", "generate personalized agent behavior profile"],
+    ["claude-workflow", "plan mode, subagents, verification loops"],
+    ["agent-swarm", "parallel agents, review loops, adversarial review"],
+    ["codex-review", "cross-model review via Codex plugin"],
+    ["conventions", "code style, naming, file structure, git"],
+  ]],
+] as const;
+
+const INTERVIEW_PROMPT = `Run /interview to generate a personalized behavior profile for AI agents in this project. It's a short adaptive interview that produces a markdown file with concrete operating rules — save it as AGENTS.md or CLAUDE.md.`;
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white font-mono selection:bg-white/10">
@@ -104,7 +130,71 @@ export default function Home() {
         {/* divider */}
         <div className="h-px bg-neutral-800 mt-10 mb-10" />
 
-        {/* dev tools */}
+        {/* agent interviewer */}
+        <p className="text-[11px] tracking-[0.08em] text-neutral-500 uppercase mb-6">
+          PERSONALIZE YOUR AGENT
+        </p>
+        <div className="text-sm text-neutral-400 space-y-4 leading-relaxed">
+          <p>
+            Run <span className="text-neutral-200">/interview</span> in Claude Code to generate a
+            personalized behavior profile. A short adaptive interview asks what you hate in AI behavior,
+            how much pushback you want, how uncertainty should be handled, and converts your answers into
+            concrete operating rules.
+          </p>
+          <p>
+            The output is a portable markdown file you save as <span className="text-neutral-200">AGENTS.md</span>,{" "}
+            <span className="text-neutral-200">CLAUDE.md</span>, or any filename your tool reads.
+            Works across Claude Code, Cursor, Windsurf, Codex, and anything else that reads project instructions.
+          </p>
+          <p className="text-neutral-500 text-xs">
+            There&apos;s also a stricter V2 variant that pushes harder for specificity.
+          </p>
+        </div>
+        <div className="relative bg-neutral-900/50 border border-neutral-800 rounded-md p-4 pr-10 mt-4">
+          <p className="text-[13px] text-neutral-300 leading-relaxed">
+            {INTERVIEW_PROMPT}
+          </p>
+          <CopyButton text={INTERVIEW_PROMPT} />
+        </div>
+
+        {/* divider */}
+        <div className="h-px bg-neutral-800 mt-10 mb-10" />
+
+        {/* skills */}
+        <p className="text-[11px] tracking-[0.08em] text-neutral-500 uppercase mb-6">
+          SKILLS
+        </p>
+        <p className="text-sm text-neutral-400 mb-6 leading-relaxed">
+          Markdown knowledge packs auto-linked into this project. Agents reference these
+          for design patterns, dev tools, and workflow strategies.
+        </p>
+        <div className="space-y-6">
+          {skills.map(([category, items]) => (
+            <div key={category}>
+              <p className="text-neutral-200 text-xs tracking-wide uppercase mb-3">{category}</p>
+              <div className="space-y-0">
+                {(items as readonly (readonly [string, string])[]).map(([name, desc]) => (
+                  <div
+                    key={name}
+                    className="flex items-baseline gap-4 py-2 border-b border-neutral-800/40 last:border-b-0"
+                  >
+                    <span className="text-neutral-300 text-xs tracking-wide w-40 shrink-0">
+                      {name}
+                    </span>
+                    <span className="text-neutral-500 text-xs">
+                      {desc}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* divider */}
+        <div className="h-px bg-neutral-800 mt-10 mb-10" />
+
+        {/* dev tools explainer */}
         <p className="text-[11px] tracking-[0.08em] text-neutral-500 uppercase mb-6">
           DEV TOOLS
         </p>

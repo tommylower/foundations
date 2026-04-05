@@ -57,7 +57,9 @@ What it does:
 7. Create `.env.example` with Supabase placeholders
 8. Detect or clone [tommylower/skills](https://github.com/tommylower/skills), symlink all skill directories into `.claude/skills/`
 9. Install `/rams` command (accessibility + visual design review)
-10. Initial commit
+10. Install `/interview` command (agent behavior profile generator)
+11. Ask if you want to personalize agent behavior (runs the interviewer)
+12. Initial commit
 
 After running this, `bun dev` works and any AI agent you open the project with already has full context — your design system, your conventions, your tools.
 
@@ -71,6 +73,7 @@ Run `npx wip-scaffold --upgrade` from an existing project root to pull in the la
 - `.gitattributes`
 - Skills — pulls latest from GitHub (`git pull`), then re-links all directories
 - `/rams` command (re-installed globally)
+- `/interview` command (re-installed globally)
 
 **Never touched:**
 - `.agents/*.md` — your project context (project, architecture, design, tasks)
@@ -99,7 +102,7 @@ The skills repo is organized into:
 |-----------|-------------|
 | **design/** | UI principles, animation (framer-motion), gradients, responsive design, accessibility (rams), CSS interaction tips, Figma MCP, wiretext, reference patterns |
 | **dev-tools/** | Agentation (annotation toolbar + MCP), Interface Craft (visual styling overlay), DialKit (animation tuning panel) |
-| **workflows/** | Claude Code patterns, agent swarm, codex review, conventions, stack defaults, dev setup |
+| **workflows/** | Claude Code patterns, agent swarm, codex review, agent interviewer, conventions, stack defaults, dev setup |
 | **design-systems/** | Reference design systems (Nothing) — not auto-loaded, used on request |
 | **marketing/** | Submodule → [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) — copywriting, SEO, CRO, paid ads, email |
 
@@ -146,19 +149,30 @@ wip-scaffold my-project
         ├─ symlinks skills/* → .claude/skills/*
         │    ├─ design/           UI, motion, accessibility, design references
         │    ├─ dev-tools/        agentation, interface-craft, dialkit
-        │    ├─ workflows/        claude-workflow, agent-swarm
+        │    ├─ workflows/        claude-workflow, agent-swarm, agent-interviewer
         │    ├─ design-systems/   reference systems (on request)
         │    └─ marketing/        copywriting, SEO, CRO, ads
         │
-        └─ installs /rams globally
+        ├─ installs /rams + /interview globally
+        │
+        └─ asks: personalize agent behavior? (y/N)
 ```
 
 During development, the flow looks like:
 
-1. **Design** — Figma MCP reads tokens + layouts, or wiretext for quick ASCII prototypes, or pencil.dev for visual design in the IDE
-2. **Build** — agents reference ui-principles for spacing/type, responsive-design for fluid layouts, framer-motion for animation, gradients for color transitions
-3. **Polish** — dialkit for tuning animation values, interface-craft for visual styling, css-interaction-tips for micro-interactions
-4. **Review** — `/rams` for accessibility + visual consistency audit, agentation for agent-driven design annotations
+1. **Personalize** — `/interview` generates your agent behavior profile (how agents should think, disagree, communicate)
+2. **Design** — Figma MCP reads tokens + layouts, or wiretext for quick ASCII prototypes, or pencil.dev for visual design in the IDE
+3. **Build** — agents reference ui-principles for spacing/type, responsive-design for fluid layouts, framer-motion for animation, gradients for color transitions
+4. **Polish** — dialkit for tuning animation values, interface-craft for visual styling, css-interaction-tips for micro-interactions
+5. **Review** — `/rams` for accessibility + visual consistency audit, agentation for agent-driven design annotations
+
+## agent interviewer
+
+Every scaffolded project installs `/interview` as a Claude Code command. It runs a short adaptive interview and produces a markdown behavior file with concrete operating rules — things like how much pushback you want, how agents should handle ambiguity, what AI habits to avoid.
+
+The output is agent-agnostic. Save it as `AGENTS.md`, `CLAUDE.md`, or whatever your tool reads. It replaces writing a behavior profile from scratch.
+
+The scaffold asks during project creation whether you want to run it. You can also run `/interview` anytime after setup. There's a stricter V2 variant at `skills/workflows/agent-interviewer/variants/SKILL-v2.md` that pushes harder for specificity.
 
 ## related
 

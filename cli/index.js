@@ -67,6 +67,7 @@ if (infoMode) {
   ${dim("  claude-workflow")}     plan mode, subagents, verification, context management
   ${dim("  agent-swarm")}         parallel agents, review loops, adversarial dual-review
   ${dim("  codex-review")}        cross-model review via Codex plugin
+  ${dim("  agent-interviewer")}   generate personalized agent behavior profile
   ${dim("  conventions")}         code style, naming, file structure, git conventions
   ${dim("  stack")}               default tech choices (next, tailwind, supabase, bun)
   ${dim("  dev-setup")}           dev setup, deployment, env var management
@@ -81,6 +82,7 @@ if (infoMode) {
   ${dim("npx wip-scaffold --upgrade")}   pull latest skills + update scaffold files
   ${dim("npx wip-scaffold --info")}      this screen
   ${dim("/rams")}                        run accessibility + design review
+  ${dim("/interview")}                   generate personalized agent behavior profile
 
   ${blue("links")}
   ${dim("github.com/tommylower/wip-scaffold")}   scaffold + docs
@@ -282,16 +284,23 @@ if (upgradeMode) {
     console.log(`  skills directory: ${skillsDir}`);
   }
 
-  // ── re-install /rams ──
+  // ── re-install commands (/rams + /interview) ──
+
+  const claudeCommandsDir = join(homedir(), ".claude", "commands");
+  mkdirSync(claudeCommandsDir, { recursive: true });
 
   const ramsSource = skillsDir ? join(skillsDir, "design/rams/SKILL.md") : null;
-  const claudeCommandsDir = join(homedir(), ".claude", "commands");
-
   if (ramsSource && existsSync(ramsSource)) {
-    mkdirSync(claudeCommandsDir, { recursive: true });
     const ramsDest = join(claudeCommandsDir, "rams.md");
     cpSync(ramsSource, ramsDest, { force: true });
     console.log("  updated /rams command.");
+  }
+
+  const interviewSource = skillsDir ? join(skillsDir, "workflows/agent-interviewer/SKILL.md") : null;
+  if (interviewSource && existsSync(interviewSource)) {
+    const interviewDest = join(claudeCommandsDir, "interview.md");
+    cpSync(interviewSource, interviewDest, { force: true });
+    console.log("  updated /interview command.");
   }
 
   console.log(`
@@ -302,6 +311,7 @@ if (upgradeMode) {
     - AGENTS.md, tool configs (.claude, .cursor, .windsurfrules, .github)
     - .gitattributes
     - /rams command
+    - /interview command
 
   what was NOT touched:
     - .agents/*.md (your project context)
@@ -483,17 +493,23 @@ if (skillsDir) {
   }
 }
 
-step("/rams", "accessibility + visual design review command");
+step("commands", "/rams (accessibility review) + /interview (agent behavior profile)");
+
+const claudeCommandsDir = join(homedir(), ".claude", "commands");
+mkdirSync(claudeCommandsDir, { recursive: true });
 
 const ramsSource = skillsDir ? join(skillsDir, "design/rams/SKILL.md") : null;
-const claudeCommandsDir = join(homedir(), ".claude", "commands");
-
 if (ramsSource && existsSync(ramsSource)) {
-  mkdirSync(claudeCommandsDir, { recursive: true });
   const ramsDest = join(claudeCommandsDir, "rams.md");
   if (!existsSync(ramsDest)) {
     cpSync(ramsSource, ramsDest);
   }
+}
+
+const interviewSource = skillsDir ? join(skillsDir, "workflows/agent-interviewer/SKILL.md") : null;
+if (interviewSource && existsSync(interviewSource)) {
+  const interviewDest = join(claudeCommandsDir, "interview.md");
+  cpSync(interviewSource, interviewDest, { force: true });
 }
 
 step("metadata", "project name in layout");
@@ -533,8 +549,31 @@ try {
   console.log("  git commit failed — commit manually.");
 }
 
-console.log(`
-  ${blue("done.")} your project is ready:
+// ── agent interviewer prompt ──
+
+const runInterview = await prompt(`\n  ${blue("personalize agent behavior?")} run a short interview to generate your\n  behavior profile (CLAUDE.md / AGENTS.md). takes ~2 minutes. ${dim("(y/N)")} `);
+
+if (runInterview.toLowerCase() === "y" || runInterview.toLowerCase() === "yes") {
+  console.log(`
+  ${blue("→")} to generate your behavior profile, run this in Claude Code:
+
+    cd ${name}
+    /interview
+
+  the interviewer will ask a few rounds of questions and produce a
+  markdown behavior file you can save as AGENTS.md or CLAUDE.md.
+
+  there's also a stricter variant at:
+    ${dim("skills/workflows/agent-interviewer/variants/SKILL-v2.md")}
+`);
+} else {
+  console.log(`
+  ${dim("skipped.")} you can run ${blue("/interview")} anytime in Claude Code to generate
+  a personalized agent behavior profile.
+`);
+}
+
+console.log(`  ${blue("done.")} your project is ready:
 
     cd ${name}
     bun dev
