@@ -55,6 +55,6 @@
 
 ## shared references
 for foundational design patterns, see:
-- ~/Desktop/code/tools/skills/design/ui-principles/
-- ~/Desktop/code/tools/skills/design/framer-motion/
-- ~/Desktop/code/tools/skills/design/reference-patterns/
+- ~/Desktop/code/skills/design/ui-principles/
+- ~/Desktop/code/skills/design/framer-motion/
+- ~/Desktop/code/skills/design/reference-patterns/

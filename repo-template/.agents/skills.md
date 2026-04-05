@@ -20,13 +20,14 @@ this project is built to be agent-assisted from the ground up. the .agents/ dire
 
    ./skills/               # project-local (committed to repo, shared with team)
    ~/.skills/              # user-global (private to your machine, available in all projects)
-   ~/Desktop/code/tools/skills/  # alternative local path
+   ~/Desktop/code/skills/  # alternative local path
 
 2. organize by domain:
 
    skills/
      design/              # design system, UI principles, motion, references
-     agents/              # agent behavior patterns, autonomous workflows
+     dev-tools/           # agentation, interface kit, dialkit
+     workflows/           # claude workflow, agent swarm, codex review
      marketing/           # brand voice, content strategy, copy patterns
 
 3. each skill is a markdown file or a folder with a SKILL.md inside:

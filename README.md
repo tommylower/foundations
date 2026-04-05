@@ -10,14 +10,11 @@ This is opinionated. It reflects how I work — if your stack or process is diff
 
 ```
 wip-scaffold/
-  repo-template/     # files copied into every new project
   cli/               # wip-scaffold CLI
-  conventions.md     # code style, naming, file structure
-  stack.md           # default stack choices
-  workflows.md       # dev setup, deployment, env vars
+  repo-template/     # files copied into every new project
 ```
 
-Agent workflow patterns (claude-workflow, agent-swarm) now live in [tommylower/skills](https://github.com/tommylower/skills) under `workflows/` so they get auto-linked into every project alongside design and dev-tool skills.
+All reusable knowledge (conventions, stack choices, workflows, design patterns, dev tools) lives in [tommylower/skills](https://github.com/tommylower/skills). The scaffold just links it in.
 
 ## stack
 
@@ -102,7 +99,7 @@ The skills repo is organized into:
 |-----------|-------------|
 | **design/** | UI principles, animation (framer-motion), gradients, responsive design, accessibility (rams), CSS interaction tips, Figma MCP, wiretext, reference patterns |
 | **dev-tools/** | Agentation (annotation toolbar + MCP), Interface Craft (visual styling overlay), DialKit (animation tuning panel) |
-| **workflows/** | Claude Code working patterns (plan mode, subagents, context management, hooks), parallel agent swarm (wave execution, review loops, adversarial dual-review) |
+| **workflows/** | Claude Code patterns, agent swarm, codex review, conventions, stack defaults, dev setup |
 | **design-systems/** | Reference design systems (Nothing) — not auto-loaded, used on request |
 | **marketing/** | Submodule → [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) — copywriting, SEO, CRO, paid ads, email |
 
@@ -134,14 +131,6 @@ repo-template/
 ```
 
 `AGENTS.md` is the single source of truth. Each tool's config file is a one-line pointer to it. Tool-specific preferences (like Claude's `ultrathink`) stay in that tool's config only. This means the project works with any AI coding tool without maintaining separate instructions for each one.
-
-## foundation files
-
-| File | What it covers | Who it's useful for |
-|------|---------------|-------------------|
-| **stack.md** | Technology choices and reasoning for each layer of the stack | Anyone evaluating whether this setup fits their needs |
-| **conventions.md** | TypeScript strict, functional components, naming (kebab-case files, PascalCase components), file structure, conventional commits, search-before-you-build principle | Anyone working in this stack who wants consistent code style |
-| **workflows.md** | `bun install` → `bun dev`, push-to-deploy via Vercel, env var management, Supabase setup | Reference for onboarding or setting up a new machine |
 
 ## how it all connects
 

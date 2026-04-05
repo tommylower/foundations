@@ -66,6 +66,10 @@ if (infoMode) {
   ${dim("workflows/")}
   ${dim("  claude-workflow")}     plan mode, subagents, verification, context management
   ${dim("  agent-swarm")}         parallel agents, review loops, adversarial dual-review
+  ${dim("  codex-review")}        cross-model review via Codex plugin
+  ${dim("  conventions")}         code style, naming, file structure, git conventions
+  ${dim("  stack")}               default tech choices (next, tailwind, supabase, bun)
+  ${dim("  dev-setup")}           dev setup, deployment, env var management
 
   ${blue("agent context")}
   ${dim(".agents/")}              project, architecture, design, tasks, tools, skills
@@ -116,8 +120,7 @@ if (upgradeMode) {
   // find template
   const templatePaths = [
     join(import.meta.dirname, "..", "repo-template"),
-    join(homedir(), "Desktop/code/tools/wip-scaffold/repo-template"),
-    join(homedir(), "Desktop/code/tools/foundations/repo-template"),
+    join(homedir(), "Desktop/code/projects/wip-scaffold/repo-template"),
   ];
 
   let templateDir;
@@ -183,7 +186,7 @@ if (upgradeMode) {
   const skillsPaths = [
     join(target, "skills"),
     join(homedir(), ".skills"),
-    join(homedir(), "Desktop/code/tools/skills"),
+    join(homedir(), "Desktop/code/skills"),
   ];
 
   let skillsDir;
@@ -348,8 +351,7 @@ step("agent context", ".agents/, AGENTS.md, tool configs for every AI editor");
 
 const templatePaths = [
   join(import.meta.dirname, "..", "repo-template"),
-  join(homedir(), "Desktop/code/tools/wip-scaffold/repo-template"),
-  join(homedir(), "Desktop/code/tools/foundations/repo-template"),
+  join(homedir(), "Desktop/code/projects/wip-scaffold/repo-template"),
 ];
 
 let templateDir;
@@ -423,7 +425,7 @@ step("skills", "design knowledge library, auto-updates when you add new skills")
 const skillsPaths = [
   join(target, "skills"),
   join(homedir(), ".skills"),
-  join(homedir(), "Desktop/code/tools/skills"),
+  join(homedir(), "Desktop/code/skills"),
 ];
 
 let skillsDir;
@@ -435,7 +437,7 @@ for (const p of skillsPaths) {
 }
 
 if (!skillsDir) {
-  const defaultSkillsPath = join(homedir(), "Desktop/code/tools/skills");
+  const defaultSkillsPath = join(homedir(), "Desktop/code/skills");
   try {
     run(`git clone https://github.com/tommylower/skills.git "${defaultSkillsPath}"`, { stdio: "pipe" });
     skillsDir = defaultSkillsPath;
@@ -485,8 +487,7 @@ step("landing page", "WIP welcome page at localhost:3000");
 const pagePath = join(target, "src/app/page.tsx");
 const landingTemplatePaths = [
   join(import.meta.dirname, "landing-page.tsx"),
-  join(homedir(), "Desktop/code/tools/wip-scaffold/cli/landing-page.tsx"),
-  join(homedir(), "Desktop/code/tools/foundations/cli/landing-page.tsx"),
+  join(homedir(), "Desktop/code/projects/wip-scaffold/cli/landing-page.tsx"),
 ];
 const landingTemplate = landingTemplatePaths.find((p) => existsSync(p));
 if (landingTemplate) {
