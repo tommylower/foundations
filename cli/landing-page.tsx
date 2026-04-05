@@ -95,19 +95,31 @@ export default function Home() {
         {/* divider */}
         <div className="h-px bg-neutral-800 mt-10 mb-10" />
 
-        {/* agentation */}
+        {/* dev tools */}
         <p className="text-[11px] tracking-[0.08em] text-neutral-500 uppercase mb-6">
-          AGENTATION
+          DEV TOOLS
         </p>
-        <div className="text-sm text-neutral-400 space-y-3 leading-relaxed">
-          <p>
-            Look in the <span className="text-neutral-200">bottom right corner</span>.
-            That&apos;s the agentation toolbar &mdash; a dev-only design annotation tool
-            that lets AI agents give visual feedback directly in your browser.
-          </p>
-          <p>
-            Agents can drop pins, highlight elements, and leave notes on your
-            UI as you build. It disappears in production.
+        <div className="text-sm text-neutral-400 space-y-5 leading-relaxed">
+          <div>
+            <p className="text-neutral-200 text-xs tracking-wide uppercase mb-2">Agentation</p>
+            <p>
+              Look in the <span className="text-neutral-200">bottom right corner</span>.
+              That&apos;s the agentation toolbar &mdash; a design annotation tool
+              that lets AI agents give visual feedback directly in your browser.
+              Agents can drop pins, highlight elements, and leave notes on your
+              UI as you build.
+            </p>
+          </div>
+          <div>
+            <p className="text-neutral-200 text-xs tracking-wide uppercase mb-2">Interface Kit</p>
+            <p>
+              A visual styling overlay &mdash; edit styles directly in the browser
+              and it writes back to your code. Select any element, tweak spacing,
+              colors, or typography live, and the changes persist to your source files.
+            </p>
+          </div>
+          <p className="text-neutral-500 text-xs">
+            Both are dev-only. They disappear in production builds.
           </p>
         </div>
 

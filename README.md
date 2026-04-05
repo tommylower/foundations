@@ -50,7 +50,7 @@ What it does:
 2. Scaffold Next.js with Bun — app router, TypeScript strict, ESLint + Prettier
 3. Install Tailwind CSS, Framer Motion, shadcn/ui, Supabase client
 4. Install [Vercel Analytics](https://vercel.com/docs/analytics) + [Speed Insights](https://vercel.com/docs/speed-insights) and add them to the root layout
-5. Install [Agentation](https://www.npmjs.com/package/agentation) dev toolbar and add it to the root layout (dev-only)
+5. Install [Agentation](https://www.npmjs.com/package/agentation) (design annotations) and [Interface Kit](https://github.com/joshpuckett/interfacekit) (visual styling) and add both to the root layout (dev-only)
 6. Copy repo-template into the project:
    - `.agents/` — structured context that tells AI agents about your project, architecture, design system, and current tasks
    - `AGENTS.md` — universal agent instructions (single source of truth)
