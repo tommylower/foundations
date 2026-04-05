@@ -488,4 +488,7 @@ console.log(`
     bun dev
 
   open ${dim("http://localhost:3000")}
+
+  ${blue("next:")} open ${dim("README.md")} and describe your project.
+  it has prompts to guide you — what it is, how it works, key decisions.
 `);
