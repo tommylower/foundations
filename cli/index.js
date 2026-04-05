@@ -185,19 +185,67 @@ if (upgradeMode) {
     }
   }
 
-  if (skillsDir && existsSync(join(skillsDir, ".git"))) {
+  // if skills dir is missing or not a valid git repo, re-clone
+  if (!skillsDir) {
+    const defaultSkillsPath = join(homedir(), ".skills");
+    console.log("  skills directory not found. cloning from GitHub...");
     try {
-      const before = quiet(`git -C "${skillsDir}" rev-parse HEAD`);
-      run(`git -C "${skillsDir}" pull --ff-only`, { stdio: "pipe" });
-      const after = quiet(`git -C "${skillsDir}" rev-parse HEAD`);
-      if (before !== after) {
-        const count = quiet(`git -C "${skillsDir}" log --oneline ${before}..${after} | wc -l`).trim();
-        console.log(`  pulled ${count} new commit(s) to skills`);
-      } else {
-        console.log("  skills already up to date");
-      }
+      run(`git clone https://github.com/tommylower/skills.git "${defaultSkillsPath}"`, { stdio: "pipe" });
+      skillsDir = defaultSkillsPath;
+      console.log("  cloned skills repo.");
     } catch {
-      console.log("  could not pull skills (offline or merge needed). using local copy.");
+      console.log("  could not clone skills repo (offline?). skipping skills.");
+    }
+  } else if (!existsSync(join(skillsDir, ".git"))) {
+    console.log(`  warning: ${skillsDir} exists but is not a git repo. removing and re-cloning...`);
+    try {
+      run(`rm -rf "${skillsDir}"`, { stdio: "pipe" });
+      run(`git clone https://github.com/tommylower/skills.git "${skillsDir}"`, { stdio: "pipe" });
+      console.log("  re-cloned skills repo.");
+    } catch {
+      console.log("  could not re-clone skills repo. skipping skills.");
+      skillsDir = null;
+    }
+  } else {
+    // valid git repo — check for corruption and pull
+    try {
+      quiet(`git -C "${skillsDir}" fsck --no-dangling`);
+    } catch {
+      console.log(`  warning: skills repo is corrupted. re-cloning...`);
+      try {
+        run(`rm -rf "${skillsDir}"`, { stdio: "pipe" });
+        run(`git clone https://github.com/tommylower/skills.git "${skillsDir}"`, { stdio: "pipe" });
+        console.log("  re-cloned skills repo.");
+      } catch {
+        console.log("  could not re-clone skills repo. skipping skills.");
+        skillsDir = null;
+      }
+    }
+
+    if (skillsDir) {
+      try {
+        const before = quiet(`git -C "${skillsDir}" rev-parse HEAD`);
+        run(`git -C "${skillsDir}" pull --ff-only`, { stdio: "pipe" });
+        const after = quiet(`git -C "${skillsDir}" rev-parse HEAD`);
+        if (before !== after) {
+          const count = quiet(`git -C "${skillsDir}" log --oneline ${before}..${after} | wc -l`).trim();
+          console.log(`  pulled ${count} new commit(s) to skills`);
+        } else {
+          console.log("  skills already up to date");
+        }
+      } catch {
+        console.log("  could not pull skills (offline or merge needed). using local copy.");
+      }
+    }
+  }
+
+  // verify expected skill directories exist
+  if (skillsDir) {
+    const expected = ["design", "dev-tools", "workflows"];
+    const missing = expected.filter((d) => !existsSync(join(skillsDir, d)));
+    if (missing.length > 0) {
+      console.log(`  warning: missing skill directories: ${missing.join(", ")}`);
+      console.log("  try deleting ~/.skills and running --upgrade again to re-clone.");
     }
   }
 
