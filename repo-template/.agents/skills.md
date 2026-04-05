@@ -25,7 +25,7 @@ this project is built to be agent-assisted from the ground up. the .agents/ dire
 
    skills/
      design/              # design system, UI principles, motion, references
-     dev-tools/           # agentation, interface kit, dialkit
+     dev-tools/           # agentation, dialkit
      workflows/           # claude workflow, agent swarm, codex review
      marketing/           # brand voice, content strategy, copy patterns
 

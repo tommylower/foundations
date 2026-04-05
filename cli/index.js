@@ -60,7 +60,6 @@ if (infoMode) {
 
   ${dim("dev-tools/")}
   ${dim("  agentation")}          design annotation toolbar + MCP agent sync
-  ${dim("  interface-craft")}     visual styling overlay, edits write back to code
   ${dim("  dialkit")}             dev-only sliders/spring editors for tuning values
 
   ${dim("workflows/")}
@@ -284,6 +283,133 @@ if (upgradeMode) {
     console.log(`  skills directory: ${skillsDir}`);
   }
 
+  // ── migrate dev tools in layout.tsx ──
+
+  const layoutPath = join(target, "src/app/layout.tsx");
+  if (existsSync(layoutPath)) {
+    let layout = readFileSync(layoutPath, "utf-8");
+    let layoutChanged = false;
+
+    // remove interface-kit if present (no longer bundled)
+    if (layout.includes("interface-kit")) {
+      layout = layout.replace(/import\s*\{[^}]*\}\s*from\s*["']interface-kit[^"']*["'];\s*\n?/g, "");
+      layout = layout.replace(/\s*\{process\.env\.NODE_ENV === "development" && <InterfaceKit\s*\/>\}\s*\n?/g, "\n");
+      layoutChanged = true;
+      console.log("  removed interface-kit from layout (no longer bundled)");
+    }
+
+    // add dialkit if not present
+    if (!layout.includes("dialkit")) {
+      // add import after agentation import if it exists, otherwise after last import
+      if (layout.includes("agentation")) {
+        layout = layout.replace(
+          /import\s*\{\s*Agentation\s*\}\s*from\s*["']agentation["'];?\s*\n/,
+          (match) => match + `import { DialKit } from "dialkit";\n`
+        );
+      } else {
+        const lastImportIdx = layout.lastIndexOf("import ");
+        const lastImportEnd = layout.indexOf("\n", layout.indexOf(";", lastImportIdx));
+        layout = layout.slice(0, lastImportEnd + 1) + `import { DialKit } from "dialkit";\n` + layout.slice(lastImportEnd + 1);
+      }
+
+      // add component before </body>
+      if (layout.includes("Agentation")) {
+        layout = layout.replace(
+          /(\{process\.env\.NODE_ENV === "development" && <Agentation\s*\/>\})\s*\n/,
+          (match) => match + `          {process.env.NODE_ENV === "development" && <DialKit />}\n`
+        );
+      } else {
+        layout = layout.replace(
+          /<\/body>/,
+          `    {process.env.NODE_ENV === "development" && <DialKit />}\n      </body>`
+        );
+      }
+
+      layoutChanged = true;
+      console.log("  added dialkit to layout");
+    }
+
+    // add agentation if not present
+    if (!layout.includes("agentation")) {
+      const lastImportIdx = layout.lastIndexOf("import ");
+      const lastImportEnd = layout.indexOf("\n", layout.indexOf(";", lastImportIdx));
+      layout = layout.slice(0, lastImportEnd + 1) + `import { Agentation } from "agentation";\n` + layout.slice(lastImportEnd + 1);
+
+      layout = layout.replace(
+        /<\/body>/,
+        `    {process.env.NODE_ENV === "development" && <Agentation />}\n      </body>`
+      );
+
+      layoutChanged = true;
+      console.log("  added agentation to layout");
+    }
+
+    if (layoutChanged) {
+      writeFileSync(layoutPath, layout);
+    }
+  }
+
+  // ── update dependencies ──
+
+  const pkgPath = join(target, "package.json");
+  if (existsSync(pkgPath)) {
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+    const deps = pkg.dependencies || {};
+    const devDeps = pkg.devDependencies || {};
+    const allDeps = { ...deps, ...devDeps };
+
+    const toAdd = [];
+    const toRemove = [];
+
+    if (!allDeps["agentation"]) toAdd.push("agentation");
+    if (!allDeps["dialkit"]) toAdd.push("dialkit");
+    if (allDeps["interface-kit"]) toRemove.push("interface-kit");
+
+    if (toRemove.length > 0) {
+      try {
+        run(`bun remove ${toRemove.join(" ")}`, { stdio: "pipe" });
+        console.log(`  removed ${toRemove.join(", ")}`);
+      } catch {
+        console.log(`  could not remove ${toRemove.join(", ")} — remove manually`);
+      }
+    }
+
+    if (toAdd.length > 0) {
+      try {
+        run(`bun add ${toAdd.join(" ")}`, { stdio: "pipe" });
+        console.log(`  added ${toAdd.join(", ")}`);
+      } catch {
+        console.log(`  could not add ${toAdd.join(", ")} — install manually`);
+      }
+    }
+  }
+
+  // ── update landing page ──
+
+  const pagePath = join(target, "src/app/page.tsx");
+  const landingTemplate = join(import.meta.dirname, "landing-page.tsx");
+  if (existsSync(pagePath) && existsSync(landingTemplate)) {
+    const currentPage = readFileSync(pagePath, "utf-8");
+    // only replace if it's still the scaffold landing page
+    if (currentPage.includes("scaffolded with wip-scaffold") || currentPage.includes("wave created")) {
+      cpSync(landingTemplate, pagePath);
+      // preserve project description if it was set
+      const projectMdPath = join(target, ".agents/project.md");
+      if (existsSync(projectMdPath)) {
+        const projectMd = readFileSync(projectMdPath, "utf-8");
+        const descMatch = projectMd.match(/^>\s*(.+)$/m);
+        if (descMatch && descMatch[1] && !descMatch[1].includes("describe this project")) {
+          let page = readFileSync(pagePath, "utf-8");
+          page = page.replace("{{PROJECT_DESCRIPTION}}", descMatch[1]);
+          writeFileSync(pagePath, page);
+        }
+      }
+      console.log("  updated landing page");
+    } else {
+      console.log("  landing page has been customized — skipping");
+    }
+  }
+
   // ── re-install commands (/rams + /interview) ──
 
   const claudeCommandsDir = join(homedir(), ".claude", "commands");
@@ -310,14 +436,17 @@ if (upgradeMode) {
     - skills (pulled latest from GitHub + re-linked)
     - AGENTS.md, tool configs (.claude, .cursor, .windsurfrules, .github)
     - .gitattributes
+    - dev tools in layout (agentation + dialkit, removed interface-kit if present)
+    - dependencies (added/removed as needed)
+    - landing page (if still the scaffold default)
     - /rams command
     - /interview command
 
   what was NOT touched:
     - .agents/*.md (your project context)
-    - src/ (your code)
+    - src/ (your code, except layout dev tool lines + scaffold landing page)
     - design/ (your design files)
-    - package.json, node_modules, .env
+    - .env
 
   check what's new: ${dim("https://github.com/tommylower/skills")}
 `);
@@ -364,22 +493,22 @@ if (existsSync(layoutPath)) {
   writeFileSync(layoutPath, layout);
 }
 
-step("dev tools", "agentation (annotations) + interface kit (visual styling), dev-only");
-run("bun add agentation interface-kit");
+step("dev tools", "agentation (annotations) + dialkit (live tuning), dev-only");
+run("bun add agentation dialkit");
 
-// add Agentation + InterfaceKit to layout (dev only)
+// add Agentation + DialKit to layout (dev only)
 if (existsSync(layoutPath)) {
   let layout = readFileSync(layoutPath, "utf-8");
 
   if (!layout.includes("agentation")) {
     const lastImportIdx = layout.lastIndexOf("import ");
     const lastImportEnd = layout.indexOf("\n", layout.indexOf(";", lastImportIdx));
-    layout = layout.slice(0, lastImportEnd + 1) + `import { Agentation } from "agentation";\nimport { InterfaceKit } from "interface-kit/react";\n` + layout.slice(lastImportEnd + 1);
+    layout = layout.slice(0, lastImportEnd + 1) + `import { Agentation } from "agentation";\nimport { DialKit } from "dialkit";\n` + layout.slice(lastImportEnd + 1);
 
-    // add both components after Analytics/SpeedInsights, before </body>
+    // add Agentation + DialKit after Analytics/SpeedInsights, before </body>
     layout = layout.replace(
       /<\/body>/,
-      `    {process.env.NODE_ENV === "development" && <Agentation />}\n          {process.env.NODE_ENV === "development" && <InterfaceKit />}\n      </body>`
+      `    {process.env.NODE_ENV === "development" && <Agentation />}\n          {process.env.NODE_ENV === "development" && <DialKit />}\n      </body>`
     );
 
     writeFileSync(layoutPath, layout);
@@ -555,7 +684,7 @@ const runInterview = await prompt(`\n  ${blue("personalize agent behavior?")} ru
 
 if (runInterview.toLowerCase() === "y" || runInterview.toLowerCase() === "yes") {
   console.log(`
-  ${blue("→")} to generate your behavior profile, run this in Claude Code:
+  ${blue("→")} to generate your behavior profile, run this in your coding agent:
 
     cd ${name}
     /interview
@@ -567,7 +696,7 @@ if (runInterview.toLowerCase() === "y" || runInterview.toLowerCase() === "yes") 
 `);
 } else {
   console.log(`
-  ${dim("skipped.")} you can run ${blue("/interview")} anytime in Claude Code to generate
+  ${dim("skipped.")} you can run ${blue("/interview")} anytime in your coding agent to generate
   a personalized agent behavior profile.
 `);
 }
