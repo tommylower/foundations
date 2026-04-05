@@ -54,6 +54,7 @@ if (infoMode) {
   ${dim("dialkit")}               dev-only sliders/spring editors for tuning values
   ${dim("reference-patterns")}    Linear, Vercel, Lovable — real production patterns
   ${dim("figma-mcp")}             read tokens + layouts from Figma files
+  ${dim("interface-craft")}        polished animated interfaces, storyboard DSL
   ${dim("wiretext")}              ASCII wireframes for early layout planning
 
   ${blue("agent context")}
@@ -445,37 +446,21 @@ if (existsSync(layoutPath)) {
   writeFileSync(layoutPath, layout);
 }
 
-step("landing page", "WIP welcome page at localhost:3000, delete when ready");
+step("landing page", "WIP welcome page at localhost:3000");
 
 // replace next.js default page with WIP landing
 const pagePath = join(target, "src/app/page.tsx");
-writeFileSync(pagePath, `export default function Home() {
-  return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center font-mono">
-      <pre className="text-[#388cf7] text-sm leading-tight mb-8">
-{\`  ██     ██ ██ ██████
-  ██     ██ ██ ██   ██
-  ██  █  ██ ██ ██████
-  ██ ███ ██ ██ ██
-   ███ ███  ██ ██\`}
-      </pre>
-      <p className="text-neutral-400 text-sm tracking-wide mb-1">WAVES DONT DIE.</p>
-      <a
-        href="https://waveinprogress.com"
-        className="text-neutral-500 text-xs hover:text-white transition-colors"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        waveinprogress.com
-      </a>
-      <div className="mt-12 text-neutral-600 text-xs text-center space-y-1">
-        <p>scaffolded with wip-scaffold</p>
-        <p>delete this file and start building</p>
-      </div>
-    </div>
-  );
+const landingTemplatePaths = [
+  join(import.meta.dirname, "landing-page.tsx"),
+  join(homedir(), "Desktop/code/tools/wip-scaffold/cli/landing-page.tsx"),
+  join(homedir(), "Desktop/code/tools/foundations/cli/landing-page.tsx"),
+];
+const landingTemplate = landingTemplatePaths.find((p) => existsSync(p));
+if (landingTemplate) {
+  cpSync(landingTemplate, pagePath);
+} else {
+  console.log("  landing page template not found — skipping.");
 }
-`);
 
 // shadcn init writes globals.css with theme variables — leave it alone
 
