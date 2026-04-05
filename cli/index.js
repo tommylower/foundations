@@ -491,6 +491,12 @@ const landingTemplatePaths = [
 const landingTemplate = landingTemplatePaths.find((p) => existsSync(p));
 if (landingTemplate) {
   cpSync(landingTemplate, pagePath);
+  // inject project description into landing page
+  if (existsSync(pagePath)) {
+    let page = readFileSync(pagePath, "utf-8");
+    page = page.replace("{{PROJECT_DESCRIPTION}}", projectDesc || "");
+    writeFileSync(pagePath, page);
+  }
 } else {
   console.log("  landing page template not found — skipping.");
 }

@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 
-const PROMPT = `Delete src/app/page.tsx and build the real landing page for this project. Read AGENTS.md and .agents/design.md first to understand the stack and design direction. Use the existing shadcn/ui components, Tailwind tokens, and Framer Motion for animations. Start with a hero section and build from there.`;
+const PROJECT_DESCRIPTION = `{{PROJECT_DESCRIPTION}}`;
+
+const PROMPT = PROJECT_DESCRIPTION
+  ? `This project is: ${PROJECT_DESCRIPTION}. Delete src/app/page.tsx and build the real landing page. Read AGENTS.md and .agents/design.md first to understand the stack and design direction. Use the existing shadcn/ui components, Tailwind tokens, and Framer Motion for animations. Start with a hero section and build from there.`
+  : `Delete src/app/page.tsx and build the real landing page for this project. Read AGENTS.md and .agents/design.md first to understand the stack and design direction. Use the existing shadcn/ui components, Tailwind tokens, and Framer Motion for animations. Start with a hero section and build from there.`;
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -64,6 +68,11 @@ export default function Home() {
           <p className="text-white text-[11px] tracking-[0.08em] uppercase mt-1">
             happy building.
           </p>
+          {PROJECT_DESCRIPTION && (
+            <p className="text-neutral-500 text-xs mt-4 max-w-sm mx-auto leading-relaxed">
+              {PROJECT_DESCRIPTION}
+            </p>
+          )}
         </div>
 
         {/* divider */}
