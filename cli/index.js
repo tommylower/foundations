@@ -45,17 +45,26 @@ if (infoMode) {
   ${dim("oklch")}                 perceptually uniform color, consistent dark mode
 
   ${blue("skills")} ${dim("(auto-linked, auto-update)")}
-  ${dim("ui-principles")}         spacing, type, layout, component standards, slop detection
-  ${dim("gradients")}             oklab/oklch, layering, blend modes, animation recipes
-  ${dim("responsive-design")}     fluid scales, container queries, AI pitfalls, testing
-  ${dim("framer-motion")}         scroll reveals, stagger, hover, accordion patterns
-  ${dim("css-interaction-tips")}  button feel, entrance, jitter fix, touch targets
-  ${dim("rams")}                  WCAG accessibility + visual consistency audit
-  ${dim("dialkit")}               dev-only sliders/spring editors for tuning values
-  ${dim("reference-patterns")}    Linear, Vercel, Lovable — real production patterns
-  ${dim("figma-mcp")}             read tokens + layouts from Figma files
-  ${dim("interface-craft")}        polished animated interfaces, storyboard DSL
-  ${dim("wiretext")}              ASCII wireframes for early layout planning
+
+  ${dim("design/")}
+  ${dim("  ui-principles")}       spacing, type, layout, component standards, slop detection
+  ${dim("  gradients")}           oklab/oklch, layering, blend modes, animation recipes
+  ${dim("  responsive-design")}   fluid scales, container queries, AI pitfalls, testing
+  ${dim("  framer-motion")}       scroll reveals, stagger, hover, accordion patterns
+  ${dim("  css-interaction-tips")}button feel, entrance, jitter fix, touch targets
+  ${dim("  rams")}                WCAG accessibility + visual consistency audit
+  ${dim("  reference-patterns")}  Linear, Vercel, Lovable — real production patterns
+  ${dim("  figma-mcp")}           read tokens + layouts from Figma files
+  ${dim("  wiretext")}            ASCII wireframes for early layout planning
+
+  ${dim("dev-tools/")}
+  ${dim("  agentation")}          design annotation toolbar + MCP agent sync
+  ${dim("  interface-craft")}     visual styling overlay, edits write back to code
+  ${dim("  dialkit")}             dev-only sliders/spring editors for tuning values
+
+  ${dim("workflows/")}
+  ${dim("  claude-workflow")}     plan mode, subagents, verification, context management
+  ${dim("  agent-swarm")}         parallel agents, review loops, adversarial dual-review
 
   ${blue("agent context")}
   ${dim(".agents/")}              project, architecture, design, tasks, tools, skills
@@ -70,7 +79,7 @@ if (infoMode) {
 
   ${blue("links")}
   ${dim("github.com/tommylower/wip-scaffold")}   scaffold + docs
-  ${dim("github.com/tommylower/skills")}       design + agent skills
+  ${dim("github.com/tommylower/skills")}       design, dev-tools, workflow skills
   ${dim("waveinprogress.com")}
 `);
   process.exit(0);

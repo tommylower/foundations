@@ -1,10 +1,31 @@
 # [project name]
 
-> one-line description of what this is.
+> one-line description of what this is and who it's for.
 
-## overview
+## what is this
 
-<!-- 2-3 sentences on what this project does and why it exists. -->
+<!-- 
+describe the project in plain language. what does it do? what problem does it solve? 
+who uses it? write this for someone who has never seen the codebase — a new teammate,
+a client, or future-you in 6 months.
+
+examples:
+- "a dashboard for tracking inventory across three warehouses, used by the ops team at [company]"
+- "a marketing site for [product] with waitlist signup and blog"
+- "an internal tool that pulls data from stripe and supabase to generate weekly revenue reports"
+-->
+
+## how it works
+
+<!--
+explain the user-facing flow, not the file structure. what does someone experience 
+when they use this? what are the key screens or interactions?
+
+examples:
+- "users sign up, connect their stripe account, and see a dashboard of their MRR trends"
+- "visitors land on the homepage, read about the product, and join the waitlist"
+- "the team logs in, filters by warehouse, and updates stock counts in real time"
+-->
 
 ## getting started
 
@@ -34,29 +55,6 @@ bun dev
 
 open [http://localhost:3000](http://localhost:3000).
 
-## project structure
-
-```
-├── src/
-│   ├── app/              # next.js app router (pages, layouts, API routes)
-│   ├── components/       # shared UI components
-│   │   ├── ui/           # base primitives (button, card, input)
-│   │   ├── layouts/      # page shells, nav, footer
-│   │   └── features/     # domain-specific components
-│   ├── lib/              # utilities, clients, helpers
-│   ├── hooks/            # custom react hooks
-│   ├── types/            # shared typescript types
-│   └── styles/           # global CSS, token definitions
-├── supabase/
-│   ├── migrations/       # SQL migration files (run in order)
-│   └── functions/        # edge functions
-├── public/               # static assets
-├── docs/                 # brand and reference copy (not served in production)
-├── design/               # .pen design files (pencil.dev)
-├── .agents/              # AI agent context (see AGENTS.md)
-└── .claude/              # claude code config
-```
-
 ## deployment
 
 - **hosting**: vercel (auto-deploys from `main`)
@@ -70,6 +68,18 @@ supabase db push        # push local migrations to remote
 supabase db pull        # pull remote schema to local migrations
 ```
 
+## key decisions
+
+<!--
+document the non-obvious choices. why this approach over the alternatives? 
+these are the things that aren't clear from reading the code.
+
+examples:
+- "we use server components for the dashboard because the data is sensitive and shouldn't hit the client"
+- "auth is handled by supabase instead of next-auth because we need row-level security on the database"
+- "the blog uses MDX files instead of a CMS because the team prefers writing in their editor"
+-->
+
 ## transferring this codebase
 
 if you're handing this project to another team or developer:
@@ -81,39 +91,15 @@ if you're handing this project to another team or developer:
 5. **third-party services**: transfer or share API keys for any integrations
 6. **agent context**: the `.agents/` directory contains project knowledge for AI-assisted development. point their tools at it.
 
-## keeping skills up to date
+## keeping up to date
 
-this project uses design and engineering skills from [tommylower/skills](https://github.com/tommylower/skills). skills are updated independently of your project code — new patterns, fixes, and techniques are added over time.
-
-to pull the latest skills and scaffold files:
+this project uses skills from [tommylower/skills](https://github.com/tommylower/skills) — design patterns, dev tools, and workflow knowledge that AI agents reference while working. to pull the latest:
 
 ```bash
 npx wip-scaffold --upgrade
 ```
 
-this updates skills, agent configs, and tool pointers. it never touches your source code, design files, or project context in `.agents/`.
-
-run this periodically or whenever you see new skills announced. you can check what's changed at [github.com/tommylower/skills](https://github.com/tommylower/skills).
-
-## development tools
-
-### pencil.dev
-
-this repo includes `.pen` design files in the `design/` directory. install the pencil.dev extension for your IDE (VS Code or Cursor) to open and edit them visually. pencil reads tailwind tokens from the project automatically and outputs production react/tailwind code.
-
-## dependencies of note
-
-<!-- list any non-obvious or critical dependencies and why they're there -->
-
-| package | purpose | notes |
-|---|---|---|
-| `framer-motion` | animations & transitions | used for page transitions, micro-interactions |
-| `@chenglou/pretext` | text measurement | canvas-based text layout without DOM reflow, 15KB |
-| `@supabase/supabase-js` | database & auth client | |
-| `tailwindcss` | utility CSS | extended with custom OKLCH tokens in globals.css |
-<!-- add more as needed -->
-
-> **note:** if using a commercial display font, verify you have a production license before deploying.
+updates skills, agent configs, and tool pointers. never touches source code, design files, or project context.
 
 ## license
 
