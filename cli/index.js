@@ -20,6 +20,7 @@ const args = process.argv.slice(2);
 const upgradeMode = args.includes("--upgrade");
 const infoMode = args.includes("--info");
 let name = args.find((a) => !a.startsWith("--"));
+let projectDesc = "";
 
 const blue = (s) => `\x1b[38;2;56;140;247m${s}\x1b[0m`;
 const dim = (s) => `\x1b[2m${s}\x1b[0m`;
@@ -94,6 +95,8 @@ if (!name && !upgradeMode) {
     console.error("\n  no name provided.\n");
     process.exit(1);
   }
+
+  projectDesc = await prompt("  what's this project? ");
   console.log();
 }
 
@@ -363,6 +366,28 @@ if (!templateDir) {
   cpSync(templateDir, target, { recursive: true, force: true });
 }
 
+// inject project description into templates
+const projectMdPath = join(target, ".agents/project.md");
+if (existsSync(projectMdPath)) {
+  let content = readFileSync(projectMdPath, "utf-8");
+  if (projectDesc) {
+    content = content.replace("{{PROJECT_DESCRIPTION}}", projectDesc);
+  } else {
+    content = content.replace("> {{PROJECT_DESCRIPTION}}", "<!-- describe this project here -->");
+  }
+  writeFileSync(projectMdPath, content);
+}
+
+const readmePath = join(target, "README.md");
+if (existsSync(readmePath)) {
+  let readme = readFileSync(readmePath, "utf-8");
+  readme = readme.replace("[project name]", name);
+  if (projectDesc) {
+    readme = readme.replace("> one-line description of what this is and who it's for.", `> ${projectDesc}`);
+  }
+  writeFileSync(readmePath, readme);
+}
+
 // remove root CLAUDE.md created by create-next-app (ours lives in .claude/CLAUDE.md)
 const rootClaudeMd = join(target, "CLAUDE.md");
 if (existsSync(rootClaudeMd)) {
@@ -488,7 +513,4 @@ console.log(`
     bun dev
 
   open ${dim("http://localhost:3000")}
-
-  ${blue("next:")} open ${dim("README.md")} and describe your project.
-  it has prompts to guide you — what it is, how it works, key decisions.
 `);
