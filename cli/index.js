@@ -563,8 +563,7 @@ if (runInterview.toLowerCase() === "y" || runInterview.toLowerCase() === "yes") 
   the interviewer will ask a few rounds of questions and produce a
   markdown behavior file you can save as AGENTS.md or CLAUDE.md.
 
-  there's also a stricter variant at:
-    ${dim("skills/workflows/agent-interviewer/variants/SKILL-v2.md")}
+  ask for "strict mode" or "V2" to get a tighter version.
 `);
 } else {
   console.log(`

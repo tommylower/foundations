@@ -147,7 +147,7 @@ export default function Home() {
             Works across Claude Code, Cursor, Windsurf, Codex, and anything else that reads project instructions.
           </p>
           <p className="text-neutral-500 text-xs">
-            There&apos;s also a stricter V2 variant that pushes harder for specificity.
+            Ask for &quot;strict mode&quot; or &quot;V2&quot; anytime to get a tighter, more exacting version.
           </p>
         </div>
         <div className="relative bg-neutral-900/50 border border-neutral-800 rounded-md p-4 pr-10 mt-4">

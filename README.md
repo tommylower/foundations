@@ -172,7 +172,7 @@ Every scaffolded project installs `/interview` as a Claude Code command. It runs
 
 The output is agent-agnostic. Save it as `AGENTS.md`, `CLAUDE.md`, or whatever your tool reads. It replaces writing a behavior profile from scratch.
 
-The scaffold asks during project creation whether you want to run it. You can also run `/interview` anytime after setup. There's a stricter V2 variant at `skills/workflows/agent-interviewer/variants/SKILL-v2.md` that pushes harder for specificity.
+The scaffold asks during project creation whether you want to run it. You can also run `/interview` anytime after setup. Ask for "strict mode" or "V2" during the interview to get a tighter, more exacting version.
 
 ## related
 
