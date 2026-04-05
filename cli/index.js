@@ -254,6 +254,20 @@ if (upgradeMode) {
     const claudeSkillsDir = join(target, ".claude", "skills");
     mkdirSync(claudeSkillsDir, { recursive: true });
 
+    // clean up orphaned symlinks (directories removed from skills repo)
+    for (const entry of readdirSync(claudeSkillsDir, { withFileTypes: true })) {
+      const linkPath = join(claudeSkillsDir, entry.name);
+      try {
+        const stat = lstatSync(linkPath);
+        if (stat.isSymbolicLink() && !existsSync(linkPath)) {
+          unlinkSync(linkPath);
+          console.log(`  removed orphaned symlink: ${entry.name}`);
+        }
+      } catch {
+        // skip
+      }
+    }
+
     // link all skill directories found in the skills repo
     for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
       if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
