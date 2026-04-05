@@ -382,6 +382,17 @@ if (upgradeMode) {
         console.log(`  could not add ${toAdd.join(", ")} — install manually`);
       }
     }
+
+    // update existing dev tools to latest versions
+    const toUpdate = ["agentation", "dialkit"].filter((p) => allDeps[p]);
+    if (toUpdate.length > 0) {
+      try {
+        run(`bun update ${toUpdate.join(" ")}`, { stdio: "pipe" });
+        console.log(`  updated ${toUpdate.join(", ")} to latest`);
+      } catch {
+        console.log(`  could not update ${toUpdate.join(", ")} — run bun update manually`);
+      }
+    }
   }
 
   // ── update landing page ──
@@ -437,7 +448,7 @@ if (upgradeMode) {
     - AGENTS.md, tool configs (.claude, .cursor, .windsurfrules, .github)
     - .gitattributes
     - dev tools in layout (agentation + dialkit, removed interface-kit if present)
-    - dependencies (added/removed as needed)
+    - dependencies (added/removed as needed, existing tools updated to latest)
     - landing page (if still the scaffold default)
     - /rams command
     - /interview command
