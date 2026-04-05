@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { execSync } from "child_process";
-import { cpSync, existsSync, mkdirSync, symlinkSync, writeFileSync, readFileSync, lstatSync, unlinkSync, realpathSync, readdirSync } from "fs";
-import { resolve, join, basename } from "path";
+import { cpSync, existsSync, mkdirSync, symlinkSync, writeFileSync, readFileSync, lstatSync, unlinkSync, readdirSync } from "fs";
+import { resolve, join } from "path";
 import { homedir } from "os";
 import { createInterface } from "readline";
 
@@ -118,21 +118,10 @@ if (upgradeMode) {
   console.log("\n  upgrading scaffold files...\n");
 
   // find template
-  const templatePaths = [
-    join(import.meta.dirname, "..", "repo-template"),
-    join(homedir(), "Desktop/code/projects/wip-scaffold/repo-template"),
-  ];
+  const templateDir = join(import.meta.dirname, "..", "repo-template");
 
-  let templateDir;
-  for (const p of templatePaths) {
-    if (existsSync(p)) {
-      templateDir = p;
-      break;
-    }
-  }
-
-  if (!templateDir) {
-    console.error("  could not find repo-template. clone wip-scaffold first.");
+  if (!existsSync(templateDir)) {
+    console.error("  could not find repo-template.");
     process.exit(1);
   }
 
@@ -186,7 +175,6 @@ if (upgradeMode) {
   const skillsPaths = [
     join(target, "skills"),
     join(homedir(), ".skills"),
-    join(homedir(), "Desktop/code/skills"),
   ];
 
   let skillsDir;
@@ -349,20 +337,9 @@ try {
 
 step("agent context", ".agents/, AGENTS.md, tool configs for every AI editor");
 
-const templatePaths = [
-  join(import.meta.dirname, "..", "repo-template"),
-  join(homedir(), "Desktop/code/projects/wip-scaffold/repo-template"),
-];
+const templateDir = join(import.meta.dirname, "..", "repo-template");
 
-let templateDir;
-for (const p of templatePaths) {
-  if (existsSync(p)) {
-    templateDir = p;
-    break;
-  }
-}
-
-if (!templateDir) {
+if (!existsSync(templateDir)) {
   console.log("  could not find repo-template. skipping.");
 } else {
   cpSync(templateDir, target, { recursive: true, force: true });
@@ -425,7 +402,6 @@ step("skills", "design knowledge library, auto-updates when you add new skills")
 const skillsPaths = [
   join(target, "skills"),
   join(homedir(), ".skills"),
-  join(homedir(), "Desktop/code/skills"),
 ];
 
 let skillsDir;
@@ -437,7 +413,7 @@ for (const p of skillsPaths) {
 }
 
 if (!skillsDir) {
-  const defaultSkillsPath = join(homedir(), "Desktop/code/skills");
+  const defaultSkillsPath = join(homedir(), ".skills");
   try {
     run(`git clone https://github.com/tommylower/skills.git "${defaultSkillsPath}"`, { stdio: "pipe" });
     skillsDir = defaultSkillsPath;
@@ -485,12 +461,8 @@ step("landing page", "WIP welcome page at localhost:3000");
 
 // replace next.js default page with WIP landing
 const pagePath = join(target, "src/app/page.tsx");
-const landingTemplatePaths = [
-  join(import.meta.dirname, "landing-page.tsx"),
-  join(homedir(), "Desktop/code/projects/wip-scaffold/cli/landing-page.tsx"),
-];
-const landingTemplate = landingTemplatePaths.find((p) => existsSync(p));
-if (landingTemplate) {
+const landingTemplate = join(import.meta.dirname, "landing-page.tsx");
+if (existsSync(landingTemplate)) {
   cpSync(landingTemplate, pagePath);
   // inject project description into landing page
   if (existsSync(pagePath)) {

@@ -54,7 +54,7 @@
 <!-- content grid (bento/masonry): (a) full-width stack, (b) horizontal scroll groups, or (c) 2-column mini grid? -->
 
 ## shared references
-for foundational design patterns, see:
-- ~/Desktop/code/skills/design/ui-principles/
-- ~/Desktop/code/skills/design/framer-motion/
-- ~/Desktop/code/skills/design/reference-patterns/
+for foundational design patterns, see the skills library:
+- skills/design/ui-principles/
+- skills/design/framer-motion/
+- skills/design/reference-patterns/
